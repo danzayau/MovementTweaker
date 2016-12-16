@@ -12,7 +12,9 @@
 // Functions
 
 public void JumpTweak(client) {
+	// Check if the player has just jumped
 	if (g_clientJustJumped[client]) {
+		// Apply the plugin controlled takeoff speed and update global variables.
 		ApplyTakeoffSpeed(client);
 		g_clientHitPerf[client] = g_clientCanPerf[client];
 		g_clientLastTakeoffSpeed[client] = g_clientNextTakeoffSpeed[client];
@@ -21,8 +23,8 @@ public void JumpTweak(client) {
 }
 
 public bool CanBhop(client) {
+	// If the time difference between when the client landed and when they jump is short enough, it is considered a b-hop.
 	if ((GetGameTime() - g_clientLandingTime[client]) < BHOP_PERF_TIME) {
-		//PrintHintText(client, "Current: %f\nLanding: %f", GetGameTime(), g_clientLandingTime[client]);
 		return true;
 	}
 	else {
@@ -31,6 +33,7 @@ public bool CanBhop(client) {
 }
 
 public void ApplyTakeoffSpeed(client) {
+	// Only affects the horizontal speed of the client.
 	new Float:newVelocity[3];
 	newVelocity = g_clientVelocity[client];
 	newVelocity[2] = 0.0;
@@ -41,6 +44,7 @@ public void ApplyTakeoffSpeed(client) {
 }
 
 public float GetBhopTakeoffSpeed(client) {
+	// Get the takeoff speed from the table, or take the last value of the table if it's out of range.
 	new roundedLandingSpeed = RoundFloat(g_clientLandingSpeed[client]);
 	if (roundedLandingSpeed < BHOP_TAKEOFF_TABLE_SIZE) {
 		return g_bhopTakeoffSpeedTable[roundedLandingSpeed];

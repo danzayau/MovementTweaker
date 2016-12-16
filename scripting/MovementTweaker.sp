@@ -9,13 +9,14 @@ public Plugin myinfo =
 {
 	name = "Movement Tweaker", 
 	author = "DanZay", 
-	description = "Tweaks movement mechanics.", 
+	description = "Tweaks CS:GO movement mechanics.", 
 	version = "0.0.1", 
-	url = ""
+	url = "https://github.com/danzayau/MovementTweaker"
 };
 
 
 public void OnPluginStart() {
+	// Check if game is CS:GO.
 	EngineVersion gameEngine = GetEngineVersion();
 	if (gameEngine != Engine_CSGO)
 	{
@@ -60,6 +61,7 @@ public ShowSpeedPanel(client) {
 	}
 }
 
+/*
 public ShowDebugPanel(client) {
 	PrintHintText(client, "%f", g_clientNextTakeoffSpeed[client]);
-} 
+}*/

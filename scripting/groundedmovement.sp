@@ -97,7 +97,3 @@ public float CalculateClientVelocityModifier(client) {
 	velocityModifier = weaponScale * g_clientPrestrafeModifier[client];	
 	return velocityModifier;
 }
-
-public void ResetPrestrafe(client) {
-	
-}
