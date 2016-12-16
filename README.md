@@ -9,7 +9,7 @@ Movement Tweaker is an attempt at creating a set of movement mechanics that crea
  * **Perfect b-hops adjustment** - plugin implementation that can be controlled to be made more consistent, and customised.
  * **Prestrafe** - less complex and less buggy version than the implementation found in KZTimer.
  * **Universal weapon speed** - You will move at the same speed no matter what weapon you are holding.
- * **Speed hint text** - Shows players their current speed, and the pre speed of their latest jump (also, currently, landing speed).
+ * **Speed hint text** - Shows players their current speed, the pre speed of latest jump, and latest landing speed.
  
 ### Tested Server CVars
 
@@ -21,6 +21,13 @@ Movement Tweaker is an attempt at creating a set of movement mechanics that crea
 	sv_ladder_scale_speed 1
 	sv_staminamax 0
 ```
+
+============================
+
+### Installation
+
+ * Drop MovementTweaker.smx into csgo/addons/sourcemod/plugins
+ * Not tested with KZTimer
 
 ============================
 
@@ -46,7 +53,7 @@ This implementation of prestrafe does not take into account how it worked in oth
 
 If the player is on the ground, pressing WA or WD or SA or SD (no other combinations of directional inputs are allowed), and turning their mouse, then the player will gain a positive speed modifier. This modifier caps out at a value that results in the maximum ground movement speed of 276.
 
-**KZTimer 1.85_1 Prestrafe Notes**
+### KZTimer 1.85_1 Prestrafe Notes**
 
 In KZTimer 1.85_1, prestrafe can be achieved when only pressing A or D and moving the mouse. This is because instead of detecting if the player is pressing the forward or back keys, a function was used to determine if the player was moving forward or back. This function would return true even if the player wasn't actually moving forward.
 
