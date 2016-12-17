@@ -6,7 +6,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
 ### Features
 
- * **B-hop Tweaker** - more consistent perfect b-hops, and customised speed rewarded for hitting perfects.
+ * **Bunnyhop Tweaker** - more consistent perfect b-hops, and customised speed rewarded for hitting perfects.
  * **Prestrafe** - less complex and less buggy version than the implementation found in KZTimer 1.85_1.
  * **Universal Weapon Speed** - You will move at the same speed no matter what weapon you are holding.
  * **Speed Panel** - Shows players their current speed, the pre speed of latest jump, and latest landing speed.
@@ -22,15 +22,15 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
 ### Installation
 
- * Drop ```MovementTweaker.smx``` into ```csgo/addons/sourcemod/plugins```.
- * Config file is generated and saved as ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
+ * Extract and copy ```MovementTweaker.smx``` to ```csgo/addons/sourcemod/plugins```.
+ * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
  
-### Commands
- * ~~~!speed~~~ - Toggles the center speed panel.
+### Player Commands
+ * ```!speed``` - Toggles the center speed panel.
  
 ============================
 
-### Perfect B-Hops Adjustment
+### Bunnyhop Tweaker
 
 Players will be rewarded with a certain speed if they jump within a certain timeframe after they have landed (a successful b-hop). Normally, perfect b-hops are very inconsistent. With the ability to control the 'perf b-hop time', they are able to feel consistent without rewarding players who mistime their scroll completely.
 
@@ -42,7 +42,7 @@ When ```landing > 275```: ```rewarded = (landing - 264) / ln(1.1) + 249.8411```
 
 ![Graph of Rewarded Speed](perfspeedgraph.png?raw=true)
 
-This aims to reward players with good strafes (when b-hopping along flat ground) with a consistent pre-speed of around 300 (chosen arbitrarily).
+This aims to reward players when b-hopping along flat ground with a consistent pre-speed of around 300 (chosen arbitrarily).
 
 ============================
 
@@ -50,11 +50,11 @@ This aims to reward players with good strafes (when b-hopping along flat ground)
 
 This implementation of prestrafe does not take into account how it worked in other Source engine games. It is written based on how I think prestrafe should work since it doesn't exist in CS:GO.
 
-If the player is on the ground, pressing WA or WD or SA or SD (no other combinations of directional inputs are allowed), and turning their mouse, then the player will gain a positive speed modifier. This modifier caps out at a value that results in the maximum ground movement speed of 276.
+If the player is on the ground, pressing WA or WD or SA or SD (no other combinations of directional inputs are allowed), and turning their mouse, then the player will gain a positive speed modifier. This modifier caps out at a value that results in the maximum ground movement speed of 276.0 u/s. This does mean that players can walk diagonally and move the mouse to maintain maximum pre-strafe speed in a straight line.
 
-This does mean that players can walk diagonally and move the mouse to maintain maximum pre-strafe speed in a straight line.
+Prestrafe also begins to reduce immediately if a correct key combination is not detected. This means that releasing W too early before jumping from a prestrafe is punishing (they won't get the full 276.0 u/s).
 
-Prestrafe also begins to reduce immediately if a correct key combination is not detected. This means that releasing W too early before jumping from a prestrafe is punishing.
+============================
 
 ### KZTimer 1.85_1 Prestrafe Notes
 
