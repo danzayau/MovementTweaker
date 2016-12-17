@@ -1,19 +1,23 @@
 #include <sourcemod>
 #include <sdktools>
 
+#include "convars.sp"
+
 #include "clientmovementtracking.sp"
 #include "jumping.sp"
 #include "groundedmovement.sp"
+#include "speedpanel.sp"
 
-public Plugin myinfo = 
+#include "commands.sp"
+
+Plugin myinfo = 
 {
 	name = "Movement Tweaker", 
 	author = "DanZay", 
 	description = "Tweaks CS:GO movement mechanics.", 
-	version = "0.0.1", 
+	version = "0.1", 
 	url = "https://github.com/danzayau/MovementTweaker"
 };
-
 
 public void OnPluginStart() {
 	// Check if game is CS:GO.
@@ -23,45 +27,36 @@ public void OnPluginStart() {
 		SetFailState("This plugin is for CS:GO only.");
 	}
 	
+	// ConVars
+	RegisterConVars();
+	AutoExecConfig(true, "MovementTweaker");
+	
+	// Commands
+	RegisterCommands();
+	
 	// Event Hooks
 	HookEvent("player_jump", Event_Jump, EventHookMode_Pre);
 }
 
-public void Event_Jump(Event event, const char[] name, bool dontBroadcast)
-{
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
-	// Set the clientJustJumped flag.
-	g_clientJustJumped[client] = true;
-	// Reset the prestrafe modifier.
-	g_clientPrestrafeModifier[client] = 1.0;
-}
-
-public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon, &subtype, &cmdnum, &tickcount, &seed, mouse[2]) {
+public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3], float angles[3], int &weapon, int &subtype, int &cmdnum, int &tickcount, int &seed, int mouse[2]) {
 	// Update variables and perform routine.	
 	if (IsPlayerAlive(client)) {
 		UpdateClientGlobalVariables(client);
 		TweakMovement(client, buttons, angles);
-		ShowSpeedPanel(client);
-		//ShowDebugPanel(client);		
+		SpeedPanel(client);
 	}
 }
 
-public void TweakMovement(client, &buttons, Float:angles[3]) {
+public void Event_Jump(Event event, const char[] name, bool dontBroadcast)
+{
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	// Set the clientJustJumped flag.
+	g_clientJustJumped[client] = true;
+	// Reset the prestrafe modifier.
+	g_clientVelocityModifierPrestrafe[client] = 1.0;
+}
+
+void TweakMovement(int client, int &buttons, float angles[3]) {
 	JumpTweak(client);
-	PrestrafeTweak(client, angles[1], buttons);
-}
-
-public ShowSpeedPanel(client) {
-	// Simple centre panel to show the player some useful information regarding their speed.
-	if (g_clientHitPerf[client]) {
-		PrintHintText(client, "Speed: %.3f\nLanding: %.3f\nPre: %.3f (perf)", g_clientSpeed[client], g_clientLandingSpeed[client], g_clientLastTakeoffSpeed[client]);
-	}
-	else {
-		PrintHintText(client, "Speed: %.3f\nLanding: %.3f\nPre: %.3f", g_clientSpeed[client], g_clientLandingSpeed[client], g_clientLastTakeoffSpeed[client]);
-	}
-}
-
-/*
-public ShowDebugPanel(client) {
-	PrintHintText(client, "%f", g_clientNextTakeoffSpeed[client]);
-}*/
+	GroundedMovementTweak(client, angles[1], buttons);
+} 

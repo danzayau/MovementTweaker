@@ -1,25 +1,21 @@
 # Movement Tweaker Sourcemod Plugin for CS:GO
 
-Movement Tweaker is an attempt at creating a set of movement mechanics that create more consistent and more enjoyable environment for CS:GO KZ and other, low speed, movement gamemodes such as HnS.
+Movement Tweaker is an attempt at adjusting movement mechanics to create more consistent and refined gameplay for CS:GO KZ and other, low speed, movement gamemodes such as HnS.
 
 ============================
 
 ### Features
 
- * **Perfect b-hops adjustment** - plugin implementation that can be controlled to be made more consistent, and customised.
- * **Prestrafe** - less complex and less buggy version than the implementation found in KZTimer.
- * **Universal weapon speed** - You will move at the same speed no matter what weapon you are holding.
- * **Speed hint text** - Shows players their current speed, the pre speed of latest jump, and latest landing speed.
+ * **B-hop Tweaker** - more consistent perfect b-hops, and customised speed rewarded for hitting perfects.
+ * **Prestrafe** - less complex and less buggy version than the implementation found in KZTimer 1.85_1.
+ * **Universal Weapon Speed** - You will move at the same speed no matter what weapon you are holding.
+ * **Speed Panel** - Shows players their current speed, the pre speed of latest jump, and latest landing speed.
  
-### Tested Server CVars
+### Recommended Server CVars
 
 ```
 	sv_enablebunnyhopping 1
-	sv_airaccelerate 100
-	sv_accelerate 6.5
-	sv_friction 5.0
-	sv_ladder_scale_speed 1
-	sv_staminamax 0
+	sv_staminamax 0	
 ```
 
 ============================
@@ -27,13 +23,16 @@ Movement Tweaker is an attempt at creating a set of movement mechanics that crea
 ### Installation
 
  * Drop ```MovementTweaker.smx``` into ```csgo/addons/sourcemod/plugins```.
- * It is not going to work with KZTimer.
-
+ * Config file is generated and saved as ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
+ 
+### Commands
+ * ~~~!speed~~~ - Toggles the center speed panel.
+ 
 ============================
 
 ### Perfect B-Hops Adjustment
 
-Players will be rewarded with a certain speed if they jump within a certain timeframe after they have landed (and is what I consider to be a successful b-hop). Normally, perfect b-hops are very inconsistent. A seemingly likely theory is that a perfect b-hop requires tick perfect jump input timing in order to happen. With the ability to control the 'perf b-hop time', they are able to feel consistent without rewarding players who mistime their scroll completely.
+Players will be rewarded with a certain speed if they jump within a certain timeframe after they have landed (a successful b-hop). Normally, perfect b-hops are very inconsistent. With the ability to control the 'perf b-hop time', they are able to feel consistent without rewarding players who mistime their scroll completely.
 
 The rewarded speed is the following (and is subject to change):
 
@@ -43,15 +42,19 @@ When ```landing > 275```: ```rewarded = (landing - 264) / ln(1.1) + 249.8411```
 
 ![Graph of Rewarded Speed](perfspeedgraph.png?raw=true)
 
-This aims to reward players with good strafes (when b-hopping along flat ground) with a consistent pre-speed of around 300.
+This aims to reward players with good strafes (when b-hopping along flat ground) with a consistent pre-speed of around 300 (chosen arbitrarily).
 
 ============================
 
 ### Prestrafe
 
-This implementation of prestrafe does not take into account how it worked in other Source engine games.
+This implementation of prestrafe does not take into account how it worked in other Source engine games. It is written based on how I think prestrafe should work since it doesn't exist in CS:GO.
 
 If the player is on the ground, pressing WA or WD or SA or SD (no other combinations of directional inputs are allowed), and turning their mouse, then the player will gain a positive speed modifier. This modifier caps out at a value that results in the maximum ground movement speed of 276.
+
+This does mean that players can walk diagonally and move the mouse to maintain maximum pre-strafe speed in a straight line.
+
+Prestrafe also begins to reduce immediately if a correct key combination is not detected. This means that releasing W too early before jumping from a prestrafe is punishing.
 
 ### KZTimer 1.85_1 Prestrafe Notes
 
@@ -61,4 +64,4 @@ Prestrafe would also not work as expected when players performed it at certain a
 
 The prestrafe modifier would also not reset when in the air, meaning that when b-hopping, it was possible to get pre-speeds of higher than 250 (the key to this is to ensure that there is mouse movement when you touch the ground).
 
-There was a 'fastrun' exploit where you could hold down WAD and move your mouse to run faster. This was because players were allowed to press both all these three inputs when prestrafing.
+There was a 'fastrun' exploit where you could hold down WAD and move your mouse to run faster. This was because players were allowed to press all these three inputs and still be able to prestrafe.

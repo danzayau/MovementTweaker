@@ -1,10 +1,17 @@
 /*	bhoptakeofftable.sp
 
 	Table of bhop takeoff speeds for landing speeds 0 to BHOP_TAKEOFF_TABLE_SIZE.
+	
+	Usage:
+	For landing speed of 0 u/s, refer to g_bhopTakeoffSpeedTable[0].
+	For landing speed of 283 u/s, refer to g_bhopTakeoffSpeedTable[283].
+	etc.
 */
 
-new Float:g_bhopTakeoffSpeedTable[BHOP_TAKEOFF_TABLE_SIZE] =  {
-	0.0000,
+#define BHOP_TAKEOFF_TABLE_SIZE 500
+
+float g_bhopTakeoffSpeedTable[BHOP_TAKEOFF_TABLE_SIZE] = 
+{ 0.0000, 
 	1.0000, 
 	2.0000, 
 	3.0000, 

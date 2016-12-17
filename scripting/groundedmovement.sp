@@ -10,59 +10,76 @@
 #define NUMBER_OF_WEAPONS 38
 #define MAX_NORMAL_SPEED 250.0
 #define MAX_PRESTRAFE_MODIFIER 1.104 	// Calculated 276/250
-#define PRESTRAFE_INCREASE_RATE 0.0015
-#define PRESTRAFE_DECREASE_RATE 0.0030
+#define PRESTRAFE_INCREASE_RATE 0.0014
+#define PRESTRAFE_DECREASE_RATE 0.0020
 
 #include "weaponspeeddata.sp"
 
 // Global Variables
 
-new Float:g_clientPrestrafeModifier[MAXPLAYERS + 1];
-new Float:g_clientPrestrafeLastAngle[MAXPLAYERS + 1];
+float g_clientPrestrafeLastAngle[MAXPLAYERS + 1] =  { 0.0, ... };
+float g_clientVelocityModifierPrestrafe[MAXPLAYERS + 1] =  { 1.0, ... };
+float g_clientVelocityModifierWeapon[MAXPLAYERS + 1] =  { 1.0, ... };
+float g_clientVelocityModifier[MAXPLAYERS + 1] =  { 0.0, ... };
 
 
 // Functions
 
-public PrestrafeTweak(client, Float:angle, &buttons) {
+void GroundedMovementTweak(int client, float angle, int &buttons) {
 	// Don't do anything if client is in air.
 	if (!g_clientOnGround[client])
 	{
 		return;
 	}
+	ApplyGroundedMovementTweak(client, angle, buttons);
+}
+
+void ApplyGroundedMovementTweak(int client, float angle, int &buttons) {
+	UpdateClientVelocityModifier(client, angle, buttons);
+	SetEntPropFloat(client, Prop_Send, "m_flVelocityModifier", g_clientVelocityModifier[client]);
+}
+
+void UpdateClientVelocityModifier(int client, float angle, int &buttons) {
 	UpdateClientPrestrafeModifier(client, angle, buttons);
-	UpdateClientVelocityModifier(client);
+	UpdateClientWeaponModifier(client);
+	g_clientVelocityModifier[client] = g_clientVelocityModifierWeapon[client] * g_clientVelocityModifierPrestrafe[client];
 }
 
-public UpdateClientPrestrafeModifier(client, Float:angle, &buttons) {
-	// Variables
-	new bool:turning = (angle != g_clientPrestrafeLastAngle[client]);
-	
-	// If correct prestrafe technique is detected, increase prestrafe modifier
-	if 	(CheckIfValidPrestrafeKeys(client, buttons) && turning)
-	{
-		g_clientPrestrafeModifier[client] += PRESTRAFE_INCREASE_RATE;
+void UpdateClientPrestrafeModifier(int client, float angle, int &buttons) {
+	if (g_cvPrestrafe.IntValue) {
+		// Variables
+		bool turning = (angle != g_clientPrestrafeLastAngle[client]);
+		
+		// If correct prestrafe technique is detected, increase prestrafe modifier
+		if (CheckIfValidPrestrafeKeys(buttons) && turning)
+		{
+			g_clientVelocityModifierPrestrafe[client] += PRESTRAFE_INCREASE_RATE;
+		}
+		// Else not prestrafing, so decrease prestrafe modifier
+		else {
+			g_clientVelocityModifierPrestrafe[client] -= PRESTRAFE_DECREASE_RATE;
+		}
+		
+		// Ensure prestrafe modifier is in range (1.0 and the defined max)
+		if (g_clientVelocityModifierPrestrafe[client] < 1.0) {
+			g_clientVelocityModifierPrestrafe[client] = 1.0;
+		}
+		else if (g_clientVelocityModifierPrestrafe[client] > MAX_PRESTRAFE_MODIFIER) {
+			g_clientVelocityModifierPrestrafe[client] = MAX_PRESTRAFE_MODIFIER;
+		}
+		
+		// Save current angle for future reference.
+		g_clientPrestrafeLastAngle[client] = angle;
 	}
-	// Else not prestrafing, so decrease prestrafe modifier
 	else {
-		g_clientPrestrafeModifier[client] -= PRESTRAFE_DECREASE_RATE;
+		g_clientVelocityModifierPrestrafe[client] = 1.0; // Default to 1.0.
 	}
-	
-	// Ensure prestrafe modifier is in range (1.0 and the defined max)
-	if (g_clientPrestrafeModifier[client] < 1.0) {
-		g_clientPrestrafeModifier[client] = 1.0;
-	}
-	else if (g_clientPrestrafeModifier[client] > MAX_PRESTRAFE_MODIFIER) {
-		g_clientPrestrafeModifier[client] = MAX_PRESTRAFE_MODIFIER;
-	}
-	
-	// Save current angle for future reference.
-	g_clientPrestrafeLastAngle[client] = angle; 
 }
 
-public bool CheckIfValidPrestrafeKeys(client, &buttons) {
+bool CheckIfValidPrestrafeKeys(int &buttons) {
 	// If _only_ WA or WD or SA or SD are pressed, then return true.
 	if (((buttons & IN_FORWARD && !(buttons & IN_BACK)) || (!(buttons & IN_FORWARD) && buttons & IN_BACK))
-		&& ((buttons & IN_MOVELEFT && !(buttons & IN_MOVERIGHT)) || (!(buttons & IN_MOVELEFT) && buttons & IN_MOVERIGHT))) {
+		 && ((buttons & IN_MOVELEFT && !(buttons & IN_MOVERIGHT)) || (!(buttons & IN_MOVELEFT) && buttons & IN_MOVERIGHT))) {
 		return true;
 	}
 	else {
@@ -70,30 +87,24 @@ public bool CheckIfValidPrestrafeKeys(client, &buttons) {
 	}
 }
 
-public void UpdateClientVelocityModifier(client) {
-	SetEntPropFloat(client, Prop_Send, "m_flVelocityModifier", CalculateClientVelocityModifier(client));
-}
-
-public float CalculateClientVelocityModifier(client) {
-	new Float:velocityModifier;
-	new Float:weaponScale;
-	new weapon = GetEntPropEnt(client, Prop_Data, "m_hActiveWeapon");
-	
-	char weaponName[64];
-	GetEntityClassname(weapon, weaponName, sizeof(weaponName)); // What weapon the client is holding.
-	
-	// Get weapon speed and work out how much to scale the modifier.
-	for (new weaponID; weaponID < NUMBER_OF_WEAPONS; weaponID++) {
-		if (StrEqual(weaponName, g_weaponList[weaponID])) {
-			weaponScale = MAX_NORMAL_SPEED / g_runSpeeds[weaponID];
-			break;
+void UpdateClientWeaponModifier(int client) {
+	// Universal Weapon Speed
+	if (g_cvUniversalWeaponSpeed.IntValue) {
+		int weaponEnt = GetEntPropEnt(client, Prop_Data, "m_hActiveWeapon");
+		
+		char weaponName[64];
+		GetEntityClassname(weaponEnt, weaponName, sizeof(weaponName)); // What weapon the client is holding.
+		
+		// Get weapon speed and work out how much to scale the modifier.
+		for (int weaponID = 0; weaponID < NUMBER_OF_WEAPONS; weaponID++) {
+			if (StrEqual(weaponName, g_weaponList[weaponID])) {
+				g_clientVelocityModifierWeapon[client] = MAX_NORMAL_SPEED / g_runSpeeds[weaponID];
+				return;
+			}
 		}
-		else {
-			weaponScale = 1.0; // Weapon not found so default to 1.
-		}
+		g_clientVelocityModifierWeapon[client] = 1.0; // Default to 1.0 if weapon is not found.
 	}
-	
-	// Calculate the resulting velocity modifier.
-	velocityModifier = weaponScale * g_clientPrestrafeModifier[client];	
-	return velocityModifier;
-}
+	else {
+		g_clientVelocityModifierWeapon[client] = 1.0; // Default to 1.0.
+	}
+} 
