@@ -12,13 +12,15 @@ void RegisterCommands() {
 // Command Handlers
 
 public Action Toggle_SpeedPanel(client, args) {
-	if (g_clientSpeedPanelEnabled[client]) {
-		g_clientSpeedPanelEnabled[client] = false;
-		PrintToChat(client, "Your centre speed panel has been disabled.");
-	}
-	else {
-		g_clientSpeedPanelEnabled[client] = true;
-		PrintToChat(client, "Your centre speed panel has been enabled.");
+	if (IsValidClient(client)) {
+		if (g_clientSpeedPanelEnabled[client]) {
+			g_clientSpeedPanelEnabled[client] = false;
+			PrintToChat(client, "Your centre speed panel has been disabled.");
+		}
+		else {
+			g_clientSpeedPanelEnabled[client] = true;
+			PrintToChat(client, "Your centre speed panel has been enabled.");
+		}
 	}
 	return Plugin_Handled;
-}
+} 

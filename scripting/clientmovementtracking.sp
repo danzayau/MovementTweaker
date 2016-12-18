@@ -4,22 +4,6 @@
 */
 
 
-// Global Variables
-
-float g_clientVelocity[MAXPLAYERS + 1][3];
-float g_clientSpeed[MAXPLAYERS + 1] =  { 0.0, ... };
-bool g_clientOnGround[MAXPLAYERS + 1] =  { false, ... };
-bool g_clientJustJumped[MAXPLAYERS + 1] =  { false, ... };
-float g_clientLastTakeoffSpeed[MAXPLAYERS + 1] =  { 0.0, ... };
-float g_clientNextTakeoffSpeed[MAXPLAYERS + 1] =  { 0.0, ... };
-float g_clientLandingTime[MAXPLAYERS + 1] =  { 0.0, ... };
-float g_clientLandingSpeed[MAXPLAYERS + 1] =  { 0.0, ... };
-bool g_clientCanPerf[MAXPLAYERS + 1] =  { false, ... };
-bool g_clientHitPerf[MAXPLAYERS + 1] =  { false, ... };
-
-
-// Functions
-
 void UpdateClientGlobalVariables(int client) {
 	float oldSpeed = g_clientSpeed[client]; // Speed of client in previous tick.
 	bool oldOnGround = g_clientOnGround[client];

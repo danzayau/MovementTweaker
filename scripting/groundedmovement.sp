@@ -10,20 +10,11 @@
 #define NUMBER_OF_WEAPONS 38
 #define MAX_NORMAL_SPEED 250.0
 #define MAX_PRESTRAFE_MODIFIER 1.104 	// Calculated 276/250
-#define PRESTRAFE_INCREASE_RATE 0.0014
+#define PRESTRAFE_INCREASE_RATE 0.0015
 #define PRESTRAFE_DECREASE_RATE 0.0020
 
 #include "weaponspeeddata.sp"
 
-// Global Variables
-
-float g_clientPrestrafeLastAngle[MAXPLAYERS + 1] =  { 0.0, ... };
-float g_clientVelocityModifierPrestrafe[MAXPLAYERS + 1] =  { 1.0, ... };
-float g_clientVelocityModifierWeapon[MAXPLAYERS + 1] =  { 1.0, ... };
-float g_clientVelocityModifier[MAXPLAYERS + 1] =  { 0.0, ... };
-
-
-// Functions
 
 void GroundedMovementTweak(int client, float angle, int &buttons) {
 	// Don't do anything if client is in air.
@@ -92,19 +83,21 @@ void UpdateClientWeaponModifier(int client) {
 	if (g_cvUniversalWeaponSpeed.IntValue) {
 		int weaponEnt = GetEntPropEnt(client, Prop_Data, "m_hActiveWeapon");
 		
-		char weaponName[64];
-		GetEntityClassname(weaponEnt, weaponName, sizeof(weaponName)); // What weapon the client is holding.
-		
-		// Get weapon speed and work out how much to scale the modifier.
-		for (int weaponID = 0; weaponID < NUMBER_OF_WEAPONS; weaponID++) {
-			if (StrEqual(weaponName, g_weaponList[weaponID])) {
-				g_clientVelocityModifierWeapon[client] = MAX_NORMAL_SPEED / g_runSpeeds[weaponID];
-				return;
+		if (IsValidEntity(weaponEnt)) {		
+			char weaponName[64];
+			GetEntityClassname(weaponEnt, weaponName, sizeof(weaponName)); // What weapon the client is holding.
+			
+			// Get weapon speed and work out how much to scale the modifier.
+			for (int weaponID = 0; weaponID < NUMBER_OF_WEAPONS; weaponID++) {
+				if (StrEqual(weaponName, g_weaponList[weaponID])) {
+					g_clientVelocityModifierWeapon[client] = MAX_NORMAL_SPEED / g_runSpeeds[weaponID];
+					return;
+				}
 			}
 		}
-		g_clientVelocityModifierWeapon[client] = 1.0; // Default to 1.0 if weapon is not found.
+		
+		g_clientVelocityModifierWeapon[client] = 250.0 / 260.0; // Weapon entity not found so must have no weapon (260 u/s).
+		return;
 	}
-	else {
-		g_clientVelocityModifierWeapon[client] = 1.0; // Default to 1.0.
-	}
+	g_clientVelocityModifierWeapon[client] = 1.0; // Default to 1.0.
 } 

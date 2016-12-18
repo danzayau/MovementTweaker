@@ -5,20 +5,36 @@
 */
 
 
-bool g_clientSpeedPanelEnabled[MAXPLAYERS + 1] =  { true, ... };
-
-void SpeedPanel(int client) {
+void UpdateSpeedPanel(int client) {
 	if (g_cvSpeedPanel.IntValue && g_clientSpeedPanelEnabled[client]) {
+		UpdateSpeedPanelText(client);
 		ShowSpeedPanel(client);
 	}
 }
 
+void UpdateSpeedPanelText(int client) {
+	if (IsPlayerAlive(client)) {
+		if (g_clientHitPerf[client]) {
+			Format(g_clientSpeedPanelText[client], 512, 
+				"<font color='#948d8d'><b>Speed</b>: %.1f (<font color='#21982a'>%.1f</font>)\n<b>Landing:</b> %.1f", 
+				g_clientSpeed[client], g_clientLastTakeoffSpeed[client], g_clientLandingSpeed[client]);
+		}
+		else {
+			Format(g_clientSpeedPanelText[client], 512, 
+				"<font color='#948d8d'><b>Speed</b>: %.1f (%.1f)\n<b>Landing:</b> %.1f", 
+				g_clientSpeed[client], g_clientLastTakeoffSpeed[client], g_clientLandingSpeed[client]);
+		}
+	}
+}
+
 void ShowSpeedPanel(int client) {
-	// Simple centre panel to show the player some useful information regarding their speed.
-	if (g_clientHitPerf[client]) {
-		PrintHintText(client, "<font color='#948d8d'><b>Speed</b>: %.1f (<font color='#21982a'>%.1f</font>)\n<b>Landing:</b> %.1f", g_clientSpeed[client], g_clientLastTakeoffSpeed[client], g_clientLandingSpeed[client]);
+	if (IsPlayerAlive(client)) {
+		PrintHintText(client, "%s", g_clientSpeedPanelText[client]);
 	}
 	else {
-		PrintHintText(client, "<font color='#948d8d'><b>Speed</b>: %.1f (<font color='#9a0909'>%.1f</font>)\n<b>Landing:</b> %.1f", g_clientSpeed[client], g_clientLastTakeoffSpeed[client], g_clientLandingSpeed[client]);
+		int spectatedPlayer = GetSpectatedPlayer(client)
+		if (IsValidClient(spectatedPlayer)) {
+			PrintHintText(client, "%s", g_clientSpeedPanelText[spectatedPlayer]);
+		}
 	}
 } 

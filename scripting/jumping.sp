@@ -8,8 +8,6 @@
 #include "bhoptakeofftable.sp"
 
 
-// Functions
-
 void JumpTweak(int client) {
 	// Check if the player has just jumped
 	if (g_clientJustJumped[client]) {
@@ -37,12 +35,7 @@ void ApplyTakeoffSpeed(int client) {
 
 bool CanPerf(int client) {
 	// If the time difference between when the client landed and when they jump is short enough, it is considered a b-hop.
-	if ((GetGameTime() - g_clientLandingTime[client]) < BHOP_PERF_TIME) {
-		return true;
-	}
-	else {
-		return false;
-	}
+	return ((GetGameTime() - g_clientLandingTime[client]) < BHOP_PERF_TIME);
 }
 
 float GetBhopTakeoffSpeed(int client) {
