@@ -11,12 +11,8 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
  * **Universal Weapon Speed** - You will move at the same speed no matter what weapon you are holding.
  * **Speed Panel** - Shows players their current speed, the pre speed of latest jump, and latest landing speed.
  
-### Recommended Server CVars
-
-```
-	sv_enablebunnyhopping 1
-	sv_staminamax 0	
-```
+ ### Player Commands
+ * ```!speed``` - Toggles the center speed panel.
 
 ============================
 
@@ -25,8 +21,12 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
  * Extract and copy ```MovementTweaker.smx``` to ```csgo/addons/sourcemod/plugins```.
  * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
  
-### Player Commands
- * ```!speed``` - Toggles the center speed panel.
+### Recommended Server CVars
+
+```
+	sv_enablebunnyhopping 1
+	sv_staminamax 0	
+```
  
 ============================
 
@@ -38,7 +38,7 @@ The rewarded speed is the following (and is subject to change):
 
 When ```landing <= 275```:```rewarded = landing```
         
-When ```landing > 275```: ```rewarded = (landing - 264) / ln(1.1) + 249.8411```
+When ```landing > 275```: ```rewarded = ln(landing - 264) / ln(1.1) + 249.8411```
 
 ![Graph of Rewarded Speed](perfspeedgraph.png?raw=true)
 
