@@ -11,7 +11,8 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
  * **Universal Weapon Speed** - You will move at the same speed no matter what weapon you are holding.
  * **Speed Panel** - Shows players their current speed, the pre speed of latest jump, and latest landing speed.
  
- ### Player Commands
+### Player Commands
+
  * ```!speed``` - Toggles the center speed panel.
 
 ============================
