@@ -6,8 +6,8 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
 ### Features
 
- * **Bunnyhop Tweaker** - more consistent perfect b-hops, and customised speed rewarded for hitting perfects.
- * **Prestrafe** - less complex and less buggy version than the implementation found in KZTimer 1.85_1.
+ * **Bunnyhop Tweaker** - More consistent perfect b-hops, and customised speed rewarded for hitting perfects.
+ * **Prestrafe** - Less complex and less buggy version than the implementation found in KZTimer.
  * **Universal Weapon Speed** - You will move at the same speed no matter what weapon you are holding.
  * **Speed Panel** - Shows players their current speed, the pre speed of latest jump, and latest landing speed.
  
@@ -21,10 +21,12 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
  * Extract and copy ```MovementTweaker.smx``` to ```csgo/addons/sourcemod/plugins```.
  * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
+ * This plugin doesn't mesh well with [**KZTimer**](http://github.com/klyve/kztimerglobal). If you want a compatible timer plugin, I can offer you [**SimpleKZ**](https://github.com/danzayau/MovementTweaker).
  
-### Recommended Server CVars
+### Suggested Server CVars
 
 ```
+	sv_accelerate 6.5
 	sv_enablebunnyhopping 1
 	sv_staminamax 0	
 ```
@@ -33,7 +35,15 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
 ### Bunnyhop Tweaker
 
-Players will be rewarded with a certain speed if they jump within a certain timeframe after they have landed (a successful b-hop). Normally, perfect b-hops are very inconsistent. With the ability to control the 'perf b-hop time', they are able to feel consistent without rewarding players who mistime their scroll completely.
+Players are rewarded if they jump within a certain timeframe after they have landed (a perfect b-hop). Normally, perfect b-hops are very inconsistent. This plugin tries to control that certain timeframe, adjusting it so that they are able to feel consistent without rewarding players who mistime their scroll completely.
+
+The plugin also adjusts how much speed you keep when you hit a perfect b-hop. Normally you would keep all your speed. Instead, the plugin takes your landing speed and inputs it into a formula to give a resulting 'rewarded' speed. This means that to maintain a certain 'rewarded' speed, players will need to strafe and gain enough landing speed.
+
+The formula used is as follows (subject to change): ```500.57176 / (1 + 1.68794 * exp(-0.00208 * LandingSpeed))```
+
+![Rewarded Speed Graph (Zoomed)](perfspeedgraph1.png?raw=true)
+
+![Rewarded Speed Graph](perfspeedgraph2.png?raw=true)
 
 ============================
 

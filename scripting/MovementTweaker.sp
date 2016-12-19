@@ -8,7 +8,7 @@ Plugin myinfo =
 	name = "Movement Tweaker", 
 	author = "DanZay", 
 	description = "Tweaks CS:GO movement mechanics.", 
-	version = "0.2", 
+	version = "0.2.1", 
 	url = "https://github.com/danzayau/MovementTweaker"
 };
 
@@ -57,13 +57,17 @@ public void OnPluginStart() {
 	
 	// ConVars
 	RegisterConVars();
-	AutoExecConfig(true, "MovementTweaker");
+	AutoExecConfig(true, "MovementTweaker");	
 	
 	// Commands
 	RegisterCommands();
 	
 	// Event Hooks
-	HookEvent("player_jump", Event_Jump, EventHookMode_Pre);
+	HookEvent("player_jump", Event_Jump, EventHookMode_Pre);	
+}
+
+public void OnConfigsExecuted() {
+	UpdateAccelerateUseWeaponSpeed();
 }
 
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3], float angles[3], int &weapon, int &subtype, int &cmdnum, int &tickcount, int &seed, int mouse[2]) {
@@ -79,6 +83,11 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 	}
 }
 
+void TweakMovement(int client, int &buttons, float angles[3]) {
+	JumpTweak(client);
+	GroundedMovementTweak(client, angles[1], buttons);
+} 
+
 public void Event_Jump(Event event, const char[] name, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -87,8 +96,3 @@ public void Event_Jump(Event event, const char[] name, bool dontBroadcast)
 	// Reset the prestrafe modifier.
 	g_clientVelocityModifierPrestrafe[client] = 1.0;
 }
-
-void TweakMovement(int client, int &buttons, float angles[3]) {
-	JumpTweak(client);
-	GroundedMovementTweak(client, angles[1], buttons);
-} 

@@ -12,11 +12,12 @@ void UpdateClientGlobalVariables(int client) {
 	GetEntPropVector(client, Prop_Data, "m_vecVelocity", g_clientVelocity[client]);
 	g_clientSpeed[client] = SquareRoot(Pow(g_clientVelocity[client][0], 2.0) + Pow(g_clientVelocity[client][1], 2.0));
 	
-	// On Ground
-	g_clientOnGround[client] = true;
 	
 	// Only bother updating certain variables if the client is on the ground.
 	if (GetEntityFlags(client) & FL_ONGROUND) {
+		// On Ground
+		g_clientOnGround[client] = true;
+		
 		// Check if just landed, and record Landing Time and Landing Speed if necessary
 		if (!oldOnGround) {
 			g_clientCanPerf[client] = true; // First landing tick, therefore can perf.
