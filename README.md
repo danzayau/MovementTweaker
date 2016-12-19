@@ -35,16 +35,6 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
 Players will be rewarded with a certain speed if they jump within a certain timeframe after they have landed (a successful b-hop). Normally, perfect b-hops are very inconsistent. With the ability to control the 'perf b-hop time', they are able to feel consistent without rewarding players who mistime their scroll completely.
 
-The rewarded speed is the following (and is subject to change):
-
-When ```landing <= 275```:```rewarded = landing```
-        
-When ```landing > 275```: ```rewarded = ln(landing - 264) / ln(1.1) + 249.8411```
-
-![Graph of Rewarded Speed](perfspeedgraph.png?raw=true)
-
-This aims to reward players when b-hopping along flat ground with a consistent pre-speed of around 300 (chosen arbitrarily).
-
 ============================
 
 ### Prestrafe

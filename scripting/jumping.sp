@@ -5,8 +5,6 @@
 
 #define BHOP_PERF_TIME 0.01
 
-#include "bhoptakeofftable.sp"
-
 
 void JumpTweak(int client) {
 	// Check if the player has just jumped
@@ -39,13 +37,11 @@ bool CanPerf(int client) {
 }
 
 float GetBhopTakeoffSpeed(int client) {
-	// Get the takeoff speed from the table, or take the last value of the table if it's out of range.
-	int roundedLandingSpeed = RoundFloat(g_clientLandingSpeed[client]);
-	
-	if (roundedLandingSpeed < BHOP_TAKEOFF_TABLE_SIZE) {
-		return g_bhopTakeoffSpeedTable[roundedLandingSpeed];
+	if (g_clientLandingSpeed[client] <= 250.0) {
+		return g_clientLandingSpeed[client];	
 	}
 	else {
-		return g_bhopTakeoffSpeedTable[BHOP_TAKEOFF_TABLE_SIZE - 1];
+		// Calculate the landing speed based on a formula
+		return (500.57176 / (1 + 1.68794 * Exponential(-0.00208 * g_clientLandingSpeed[client])));
 	}
-} 
+}
