@@ -21,7 +21,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
  * Extract ```MovementTweaker.zip``` to ```csgo/``` in your server directory.
  * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
- * This plugin doesn't mesh well with [**KZTimer**](http://github.com/klyve/kztimerglobal). If you want a compatible timer plugin, I can offer you [**SimpleKZ**](https://github.com/danzayau/MovementTweaker).
+ * This plugin doesn't mesh well with [**KZTimer**](http://github.com/klyve/kztimerglobal). If you want a compatible timer plugin, I can offer you [**SimpleKZ**](https://github.com/danzayau/SimpleKZ).
  
 ### Suggested Server CVars
 
@@ -41,9 +41,9 @@ The plugin also adjusts how much speed you keep when you hit a perfect b-hop. No
 
 The formula used is as follows (subject to change): ```500.57176 / (1 + 1.68794 * exp(-0.00208 * LandingSpeed))```
 
-![Rewarded Speed Graph (Zoomed)](perfspeedgraph1.png?raw=true)
+![Rewarded Speed Graph](perfspeedgraph1.png?raw=true)
 
-![Rewarded Speed Graph](perfspeedgraph2.png?raw=true)
+![Rewarded Speed Graph (Zoomed)](perfspeedgraph2.png?raw=true)
 
 ============================
 
