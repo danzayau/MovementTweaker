@@ -19,7 +19,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
 ### Installation
 
- * Extract and copy ```MovementTweaker.smx``` to ```csgo/addons/sourcemod/plugins```.
+ * Extract ```MovementTweaker.zip``` to ```csgo/``` in your server directory.
  * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
  * This plugin doesn't mesh well with [**KZTimer**](http://github.com/klyve/kztimerglobal). If you want a compatible timer plugin, I can offer you [**SimpleKZ**](https://github.com/danzayau/MovementTweaker).
  
