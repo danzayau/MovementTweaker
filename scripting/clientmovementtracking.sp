@@ -7,11 +7,28 @@
 void UpdateClientGlobalVariables(int client) {
 	float oldSpeed = g_clientSpeed[client]; // Speed of client in previous tick.
 	bool oldOnGround = g_clientOnGround[client];
+	bool oldDucking = g_clientDucking[client];
 	
 	// Velocity & Speed (done first because accurate calculation of other variables requires being current)
 	GetEntPropVector(client, Prop_Data, "m_vecVelocity", g_clientVelocity[client]);
 	g_clientSpeed[client] = SquareRoot(Pow(g_clientVelocity[client][0], 2.0) + Pow(g_clientVelocity[client][1], 2.0));
 	
+	// By default, reset these variables
+	g_clientJustLanded[client] = false;
+	
+	// Ducking
+	if (GetEntProp(client, Prop_Send, "m_bDucked") || GetEntProp(client, Prop_Send, "m_bDucking")) {
+		g_clientDucking[client] = true;
+		if (!oldDucking) {
+			g_clientJustDucked[client] = true;
+		}
+		else {
+			g_clientJustDucked[client] = false;
+		}
+	}
+	else {
+		g_clientDucking[client] = false;
+	}
 	
 	// Only bother updating certain variables if the client is on the ground.
 	if (GetEntityFlags(client) & FL_ONGROUND) {
@@ -21,6 +38,7 @@ void UpdateClientGlobalVariables(int client) {
 		// Check if just landed, and record Landing Time and Landing Speed if necessary
 		if (!oldOnGround) {
 			g_clientCanPerf[client] = true; // First landing tick, therefore can perf.
+			g_clientJustLanded[client] = true;
 			g_clientLandingTime[client] = GetGameTime();
 			g_clientLandingSpeed[client] = oldSpeed;
 		}
