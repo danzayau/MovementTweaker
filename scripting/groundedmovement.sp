@@ -7,6 +7,7 @@
 	Replication of the prestrafe from other Source engine games was not the goal. This is essentially custom.
 */
 
+
 #define NUMBER_OF_WEAPONS 38
 #define MAX_NORMAL_SPEED 250.0
 #define MAX_PRESTRAFE_MODIFIER 1.104 	// Calculated 276/250

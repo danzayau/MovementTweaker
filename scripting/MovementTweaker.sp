@@ -8,7 +8,7 @@ Plugin myinfo =
 	name = "Movement Tweaker", 
 	author = "DanZay", 
 	description = "Tweaks CS:GO movement mechanics.", 
-	version = "0.2.1", 
+	version = "0.3", 
 	url = "https://github.com/danzayau/MovementTweaker"
 };
 
@@ -21,10 +21,13 @@ bool g_clientOnGround[MAXPLAYERS + 1] =  { false, ... };
 bool g_clientJustJumped[MAXPLAYERS + 1] =  { false, ... };
 float g_clientLastTakeoffSpeed[MAXPLAYERS + 1] =  { 0.0, ... };
 float g_clientNextTakeoffSpeed[MAXPLAYERS + 1] =  { 0.0, ... };
+bool g_clientJustLanded[MAXPLAYERS + 1] =  { false, ... };
 float g_clientLandingTime[MAXPLAYERS + 1] =  { 0.0, ... };
 float g_clientLandingSpeed[MAXPLAYERS + 1] =  { 0.0, ... };
 bool g_clientCanPerf[MAXPLAYERS + 1] =  { false, ... };
 bool g_clientHitPerf[MAXPLAYERS + 1] =  { false, ... };
+bool g_clientDucking[MAXPLAYERS + 1] =  { false, ... };
+bool g_clientJustDucked[MAXPLAYERS + 1] =  { false, ... };
 /*	groundedmovement	*/
 float g_clientPrestrafeLastAngle[MAXPLAYERS + 1] =  { 0.0, ... };
 float g_clientVelocityModifierPrestrafe[MAXPLAYERS + 1] =  { 1.0, ... };
@@ -57,17 +60,22 @@ public void OnPluginStart() {
 	
 	// ConVars
 	RegisterConVars();
-	AutoExecConfig(true, "MovementTweaker");	
+	AutoExecConfig(true, "MovementTweaker");
 	
 	// Commands
 	RegisterCommands();
 	
-	// Event Hooks
-	HookEvent("player_jump", Event_Jump, EventHookMode_Pre);	
+	// Hooks
+	HookEvent("player_jump", Event_Jump, EventHookMode_Pre);
+	HookEvent("player_spawn", OnPlayerSpawn);
 }
 
 public void OnConfigsExecuted() {
 	UpdateAccelerateUseWeaponSpeed();
+}
+
+public void OnMapStart() {
+	PrecacheModels();
 }
 
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3], float angles[3], int &weapon, int &subtype, int &cmdnum, int &tickcount, int &seed, int mouse[2]) {
@@ -76,17 +84,25 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 		// Update variables first!
 		UpdateClientGlobalVariables(client);
 		
-		if(IsPlayerAlive(client)) {
+		if (IsPlayerAlive(client)) {
 			TweakMovement(client, buttons, angles);
-		}		
+		}
 		UpdateSpeedPanel(client);
+	}
+}
+
+public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	if (g_cvSuppressLandingAnimation.IntValue) {
+		UpdatePlayerModel(client);
 	}
 }
 
 void TweakMovement(int client, int &buttons, float angles[3]) {
 	JumpTweak(client);
 	GroundedMovementTweak(client, angles[1], buttons);
-} 
+	DuckSlowdownTweak(client);
+}
 
 public void Event_Jump(Event event, const char[] name, bool dontBroadcast)
 {
@@ -95,4 +111,4 @@ public void Event_Jump(Event event, const char[] name, bool dontBroadcast)
 	g_clientJustJumped[client] = true;
 	// Reset the prestrafe modifier.
 	g_clientVelocityModifierPrestrafe[client] = 1.0;
-}
+} 
