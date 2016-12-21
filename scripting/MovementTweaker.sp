@@ -26,8 +26,8 @@ float g_clientLandingTime[MAXPLAYERS + 1] =  { 0.0, ... };
 float g_clientLandingSpeed[MAXPLAYERS + 1] =  { 0.0, ... };
 bool g_clientCanPerf[MAXPLAYERS + 1] =  { false, ... };
 bool g_clientHitPerf[MAXPLAYERS + 1] =  { false, ... };
-bool g_clientDucking[MAXPLAYERS + 1] = {false, ...};
-bool g_clientJustDucked[MAXPLAYERS + 1] = {false, ...};
+bool g_clientDucking[MAXPLAYERS + 1] =  { false, ... };
+bool g_clientJustDucked[MAXPLAYERS + 1] =  { false, ... };
 /*	groundedmovement	*/
 float g_clientPrestrafeLastAngle[MAXPLAYERS + 1] =  { 0.0, ... };
 float g_clientVelocityModifierPrestrafe[MAXPLAYERS + 1] =  { 1.0, ... };
@@ -65,12 +65,17 @@ public void OnPluginStart() {
 	// Commands
 	RegisterCommands();
 	
-	// Event Hooks
+	// Hooks
 	HookEvent("player_jump", Event_Jump, EventHookMode_Pre);
+	HookEvent("player_spawn", OnPlayerSpawn);
 }
 
 public void OnConfigsExecuted() {
 	UpdateAccelerateUseWeaponSpeed();
+}
+
+public void OnMapStart() {
+	PrecacheModels();
 }
 
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3], float angles[3], int &weapon, int &subtype, int &cmdnum, int &tickcount, int &seed, int mouse[2]) {
@@ -83,6 +88,13 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 			TweakMovement(client, buttons, angles);
 		}
 		UpdateSpeedPanel(client);
+	}
+}
+
+public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	if (g_cvSuppressLandingAnimation.IntValue) {
+		UpdatePlayerModel(client);
 	}
 }
 
