@@ -10,10 +10,10 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
  * **Prestrafe** - Less complex and less buggy version than the implementation found in KZTimer.
  * **Universal Weapon Speed** - You will move at the same speed no matter what weapon you are holding.
  * **Crouch Slowdown Tweak** - Crouching speed is reset upon landing, so consecutive crouch jumps don't feel sluggish.
- * **Perfect Crouchjump Nerf** - Crouch jumps where the player crouches and jumps in the same tick won't result in extra height.
- * **Landing Animation Suppression** - Changes player models on spawn to ones that which prevent the don't have landing animations.
+ * **Perfect Crouchjump Nerf** - If players crouch and jump in the same tick, it won't result in extra height.
+ * **Landing Animation Suppression** - Changes player models on spawn to ones that don't have landing animations.
  * **Speed Panel** - Shows players their current speed, the pre speed of latest jump, and latest landing speed.
- * All features configurable using convars with an automatically generated .cfg file.
+ * All features configurable using convars, and with an automatically generated .cfg file.
  
 ### Player Commands
 
