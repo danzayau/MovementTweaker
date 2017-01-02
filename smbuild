@@ -1,0 +1,8 @@
+Plugin(source='scripting/MovementTweaker.sp')
+
+Package(name='MovementTweaker',
+        plugins=['MovementTweaker'],
+        filegroups={
+            '.':['README.md', 'LICENSE'],
+        },
+)

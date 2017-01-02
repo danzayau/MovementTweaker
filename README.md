@@ -1,4 +1,6 @@
-# Movement Tweaker Sourcemod Plugin for CS:GO
+# Movement Tweaker (CS:GO)
+
+[![Build Status](https://travis-ci.org/danzayau/MovementTweaker.svg?branch=master)](https://travis-ci.org/danzayau/MovementTweaker)
 
 Movement Tweaker is an attempt at adjusting movement mechanics to create more consistent and refined gameplay for CS:GO KZ and other, low speed, movement gamemodes such as HnS.
 
@@ -18,6 +20,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
 ### Requirements
 
+ * **Tested Against**: SourceMod 1.7 Latest, SourceMod 1.8 Latest, SourceMod 1.9 Latest
  * [**Movement API Plugin**](https://github.com/danzayau/MovementAPI).
 
 ### Installation
