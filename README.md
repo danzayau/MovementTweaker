@@ -14,6 +14,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
  * **Crouch Slowdown Tweak** - Crouching speed is reset upon landing, so consecutive crouch jumps don't feel sluggish.
  * **Perfect Crouchjump Nerf** - If players crouch and jump in the same tick, it won't result in extra height.
  * **Landing Animation Suppression** - Changes player models on spawn to ones that don't have landing animations.
+ * **API** - Forwards and natives for you to use in other plugins (see [movementtweaker.inc](scripting/include/movementtweaker.inc)).
  * All features configurable using convars, and with an automatically generated .cfg file.
 
 ============================

@@ -19,7 +19,7 @@
  * @param client			Client entity index.
  * @noreturn
  */
-forward void OnPlayerPerfectBunnyhopMT(int client, bool jumped);
+forward void OnPlayerPerfectBunnyhopMT(int client);
 
 
 // Natives
