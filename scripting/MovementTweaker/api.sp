@@ -3,7 +3,9 @@
 	API for other plugins.
 */
 
-// Forwards
+
+/*======  Forwards  ======*/
+
 Handle gH_Forward_OnPlayerPerfectBunnyhopMT;
 
 void CreateGlobalForwards() {
@@ -16,7 +18,10 @@ void Call_OnPlayerPerfectBunnyhopMT(int client) {
 	Call_Finish();
 }
 
-// Natives
+
+
+/*======  Natives  ======*/
+
 void CreateNatives() {
 	CreateNative("MT_GetHitPerf", Native_GetHitPerf);
 }

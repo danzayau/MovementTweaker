@@ -3,6 +3,13 @@
 	Miscellaneous, non-specific functions.
 */
 
+
+void SetupMovementMethodmaps() {
+	for (int client = 1; client <= MaxClients; client++) {
+		g_MovementPlayer[client] = new MovementPlayer(client);
+	}
+}
+
 void PrecacheModels() {
 	PrecachePlayerModels();
 }
@@ -27,6 +34,6 @@ void UpdatePlayerModel(int client) {
 	}
 	else if (GetClientTeam(client) == CS_TEAM_CT) {
 		GetConVarString(gCV_PlayerModelCT, playerModel, sizeof(playerModel));
-		SetEntityModel(client, playerModel);		
+		SetEntityModel(client, playerModel);
 	}
 } 

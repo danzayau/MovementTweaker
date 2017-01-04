@@ -1,10 +1,9 @@
 /*	convars.sp
 	
-	Implements convars for server control over features of the plugin.
+	ConVars for server control over features of the plugin.
 */
 
 
-// ConVars
 ConVar gCV_AccelerateUseWeaponSpeed;
 ConVar gCV_Prestrafe;
 ConVar gCV_UniversalWeaponSpeed;

@@ -1,18 +1,10 @@
 /*	tweaks.sp
 
-	Implementation of the movement tweaks.
+	Movement tweaks.
 */
 
-#define NORMAL_JUMP_VERTICAL_VELOCITY 292.618377
-#define NUMBER_OF_WEAPONS 38
-#define MAX_NORMAL_SPEED 250.0
-#define MAX_PRESTRAFE_MODIFIER 1.104 	// Calculated 276/250
-#define PRESTRAFE_INCREASE_RATE 0.0014
-#define PRESTRAFE_DECREASE_RATE 0.0021
-#define NORMAL_DUCK_SPEED 8.0
 
-#include "weaponspeeddata.sp"
-
+/*======  General Tweak (Called Every Tick)  ======*/
 
 void GeneralTweak(MovementPlayer player) {
 	if (player.onGround) {
@@ -66,8 +58,8 @@ float WeaponVelocityModifier(MovementPlayer player) {
 			GetEntityClassname(weaponEnt, weaponName, sizeof(weaponName)); // What weapon the client is holding.
 			// Get weapon speed and work out how much to scale the modifier.
 			for (int weaponID = 0; weaponID < NUMBER_OF_WEAPONS; weaponID++) {
-				if (StrEqual(weaponName, g_weaponList[weaponID])) {
-					return MAX_NORMAL_SPEED / g_runSpeeds[weaponID];
+				if (StrEqual(weaponName, gC_WeaponNames[weaponID])) {
+					return MAX_NORMAL_SPEED / gI_WeaponRunSpeeds[weaponID];
 				}
 			}
 		}
@@ -76,12 +68,13 @@ float WeaponVelocityModifier(MovementPlayer player) {
 	return 1.0; // Default to 1.0.
 }
 
+
+
+/*======  Jump Tweak (Called on Jumping)  ======*/
+
 void JumpTweak(MovementPlayer player) {
 	if (gCV_PerfSpeedTweak.IntValue || gCV_PerfTimingTweak.IntValue) {
 		TweakTakeoffSpeed(player);
-	}
-	if (gCV_NerfPerfectCrouchjump.IntValue && player.justDucked) {
-		NerfPerfectCrouchJump(player);
 	}
 }
 
@@ -121,22 +114,36 @@ float CalculateTakeoffSpeed(MovementPlayer player) {
 
 bool HitPerf(MovementPlayer player) {
 	if (gCV_PerfTimingTweak.IntValue) {
-		return player.takeoffTick - player.landingTick <= gCV_PerfTicks.IntValue;
+		return player.jumpTick - player.landingTick <= gCV_PerfTicks.IntValue;
 	}
 	else {
-		return player.takeoffTick - player.landingTick <= 1;
+		return player.jumpTick - player.landingTick <= 1;
 	}
 }
 
-void NerfPerfectCrouchJump(MovementPlayer player) {
-	float newVelocity[3];
-	player.GetVelocity(newVelocity);
-	newVelocity[2] = NORMAL_JUMP_VERTICAL_VELOCITY;
-	player.SetVelocity(newVelocity);
+
+
+/*======  Landing Tweak (Called on Landing)  ======*/
+
+void LandingTweak(MovementPlayer player) {
+	DuckSlowdownTweak(player);
 }
 
 void DuckSlowdownTweak(MovementPlayer player) {
 	if (gCV_ResetDuckSpeedOnLanding.IntValue) {
 		player.duckSpeed = NORMAL_DUCK_SPEED;
+	}
+}
+
+
+
+/*======  Other Tweaks  ======*/
+
+void NerfPerfectCrouchJump(MovementPlayer player) {
+	if (gCV_NerfPerfectCrouchjump.IntValue) {
+		float newVelocity[3];
+		player.GetVelocity(newVelocity);
+		newVelocity[2] = NORMAL_JUMP_VERTICAL_VELOCITY;
+		player.SetVelocity(newVelocity);
 	}
 } 
