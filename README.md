@@ -21,14 +21,14 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
 ### Requirements
 
- * **Tested Against**: SourceMod 1.7 Latest, SourceMod 1.8 Latest, SourceMod 1.9 Latest
+ * **Tested Against**: SourceMod 1.7 Latest, 1.8 Latest, 1.9 Latest
  * [**Movement API Plugin**](https://github.com/danzayau/MovementAPI).
 
 ### Installation
 
  * Extract ```MovementTweaker.zip``` to ```csgo/``` in your server directory.
  * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
- * This plugin doesn't mesh well with [**KZTimer**](http://github.com/klyve/kztimerglobal). If you want a compatible timer plugin, I can offer you [**SimpleKZ**](https://github.com/danzayau/SimpleKZ).
+ * If you want a compatible KZ timer plugin, I can offer you [**SimpleKZ**](https://github.com/danzayau/SimpleKZ).
  
 ### Tested Server CVars
 
