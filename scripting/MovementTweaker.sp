@@ -12,7 +12,7 @@ Plugin myinfo =
 	name = "Movement Tweaker", 
 	author = "DanZay", 
 	description = "Tweaks CS:GO movement mechanics.", 
-	version = "0.4", 
+	version = "0.5", 
 	url = "https://github.com/danzayau/MovementTweaker"
 };
 
