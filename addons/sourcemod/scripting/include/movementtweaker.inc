@@ -1,6 +1,8 @@
 /* 	Movement Tweaker API Include File
-	
 	Author: DanZay
+	
+	Plugin Version: 0.5
+	Plugin Website: https://github.com/danzayau/MovementTweaker
 */
 
 

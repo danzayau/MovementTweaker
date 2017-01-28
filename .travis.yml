@@ -24,11 +24,6 @@ before_script:
     - cd addons/sourcemod/scripting/
     - chmod +x spcomp
     - PATH+=":$PWD"
-
-    # includes
-    - cp ../../../scripting/include/* include/
-    - wget -O include/movement.inc https://raw.githubusercontent.com/DanZayAU/MovementAPI/master/scripting/include/movement.inc
-    
     - cd ../../..
 
 script:
