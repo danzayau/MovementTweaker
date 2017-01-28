@@ -15,25 +15,18 @@ void PrecacheModels() {
 }
 
 void PrecachePlayerModels() {
-	char playerModelT[256];
-	char playerModelCT[256];
-	GetConVarString(gCV_PlayerModelT, playerModelT, sizeof(playerModelT));
-	GetConVarString(gCV_PlayerModelCT, playerModelCT, sizeof(playerModelCT));
+	GetConVarString(gCV_PlayerModelT, gC_PlayerModelT, sizeof(gC_PlayerModelT));
+	GetConVarString(gCV_PlayerModelCT, gC_PlayerModelCT, sizeof(gC_PlayerModelCT));
 	
-	PrecacheModel(playerModelT, true);
-	AddFileToDownloadsTable(playerModelT);
-	PrecacheModel(playerModelCT, true);
-	AddFileToDownloadsTable(playerModelCT);
+	PrecacheModel(gC_PlayerModelT, true);
+	AddFileToDownloadsTable(gC_PlayerModelT);
+	PrecacheModel(gC_PlayerModelCT, true);
+	AddFileToDownloadsTable(gC_PlayerModelCT);
 }
 
 void UpdatePlayerModel(int client) {
-	char playerModel[256];
 	if (GetClientTeam(client) == CS_TEAM_T) {
-		GetConVarString(gCV_PlayerModelT, playerModel, sizeof(playerModel));
-		SetEntityModel(client, playerModel);
+		SetEntityModel(client, gC_PlayerModelT);
 	}
-	else if (GetClientTeam(client) == CS_TEAM_CT) {
-		GetConVarString(gCV_PlayerModelCT, playerModel, sizeof(playerModel));
-		SetEntityModel(client, playerModel);
-	}
+	SetEntityModel(client, gC_PlayerModelCT);
 } 
