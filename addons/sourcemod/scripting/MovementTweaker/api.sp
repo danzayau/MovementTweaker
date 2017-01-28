@@ -4,23 +4,23 @@
 */
 
 
-/*======  Forwards  ======*/
+/*===============================  Forwards  ===============================*/
 
-Handle gH_Forward_OnPlayerPerfectBunnyhopMT;
+Handle gH_Forward_OnPlayerPerfectBunnyhop;
 
 void CreateGlobalForwards() {
-	gH_Forward_OnPlayerPerfectBunnyhopMT = CreateGlobalForward("OnPlayerPerfectBunnyhopMT", ET_Event, Param_Cell);
+	gH_Forward_OnPlayerPerfectBunnyhop = CreateGlobalForward("MT_OnPlayerPerfectBunnyhop", ET_Event, Param_Cell);
 }
 
 void Call_OnPlayerPerfectBunnyhopMT(int client) {
-	Call_StartForward(gH_Forward_OnPlayerPerfectBunnyhopMT);
+	Call_StartForward(gH_Forward_OnPlayerPerfectBunnyhop);
 	Call_PushCell(client);
 	Call_Finish();
 }
 
 
 
-/*======  Natives  ======*/
+/*===============================  Natives  ===============================*/
 
 void CreateNatives() {
 	CreateNative("MT_GetHitPerf", Native_GetHitPerf);

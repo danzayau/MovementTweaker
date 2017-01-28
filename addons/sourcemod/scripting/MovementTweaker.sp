@@ -1,6 +1,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <cstrike>
+
 #include <movement>
 #include <movementtweaker>
 
@@ -12,15 +13,16 @@ Plugin myinfo =
 	name = "Movement Tweaker", 
 	author = "DanZay", 
 	description = "Tweaks CS:GO movement mechanics.", 
-	version = "0.5", 
+	version = "0.6.0", 
 	url = "https://github.com/danzayau/MovementTweaker"
 };
 
 
 
-/*======  Definitions  ======*/
+/*===============================  Definitions  ===============================*/
 
-#define NORMAL_JUMP_VERTICAL_VELOCITY 292.618377
+#define NORMAL_JUMP_VERTICAL_VELOCITY 292.618377 // Found by taking player Velocity[2] after normally jumping
+#define NORMAL_JUMP_ORIGIN_OFFSET 2.341745 // Calculated by subtracting player GroundOrigin[2] from Origin[2] after normally jumping
 #define NUMBER_OF_WEAPONS 37
 #define MAX_NORMAL_SPEED 250.0
 #define MAX_PRESTRAFE_MODIFIER 1.104 	// Calculated 276/250
@@ -30,11 +32,13 @@ Plugin myinfo =
 
 
 
-/*======  Global Variables  ======*/
+/*===============================  Global Variables  ===============================*/
 
 MovementPlayer g_MovementPlayer[MAXPLAYERS + 1];
 float gF_PrestrafeVelocityModifier[MAXPLAYERS + 1];
 bool gB_HitPerf[MAXPLAYERS + 1];
+char gC_PlayerModelT[256];
+char gC_PlayerModelCT[256];
 
 char gC_WeaponNames[NUMBER_OF_WEAPONS][] = 
 { "weapon_ak47", "weapon_aug", "weapon_awp", "weapon_bizon", "weapon_deagle", 
@@ -58,7 +62,7 @@ int gI_WeaponRunSpeeds[NUMBER_OF_WEAPONS] =  // Max movement speed of weapons (r
 
 
 
-/*======  Includes  ======*/
+/*===============================  Includes  ===============================*/
 
 #include "MovementTweaker/convars.sp"
 #include "MovementTweaker/tweaks.sp"
@@ -67,7 +71,7 @@ int gI_WeaponRunSpeeds[NUMBER_OF_WEAPONS] =  // Max movement speed of weapons (r
 
 
 
-/*======  Events  ======*/
+/*===============================  Events  ===============================*/
 
 public void OnPluginStart() {
 	// Check if game is CS:GO.
@@ -108,7 +112,7 @@ public void OnStartTouchGround(int client) {
 	LandingTweak(g_MovementPlayer[client]);
 }
 
-public void OnStopTouchGround(int client, bool jumped, bool ducked) {
+public void OnStopTouchGround(int client, bool jumped, bool ducked, bool landed) {
 	if (jumped) {
 		JumpTweak(g_MovementPlayer[client]);
 		if (ducked) {
