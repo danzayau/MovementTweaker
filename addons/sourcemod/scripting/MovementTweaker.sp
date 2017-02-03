@@ -22,7 +22,6 @@ Plugin myinfo =
 /*===============================  Definitions  ===============================*/
 
 #define NORMAL_JUMP_VERTICAL_VELOCITY 292.54 // Found by testing until binding resulted in similar jump height to normal
-#define NORMAL_JUMP_ORIGIN_OFFSET 2.341745 // Calculated by subtracting player GroundOrigin[2] from Origin[2] after normally jumping
 #define NUMBER_OF_WEAPONS 37
 #define MAX_NORMAL_SPEED 250.0 // Desired speed when just holding down W and running
 #define NO_WEAPON_SPEED // Max speed with no weapon and just holding down W and running
