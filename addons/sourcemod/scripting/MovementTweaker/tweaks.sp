@@ -75,9 +75,6 @@ void JumpTweak(MovementPlayer player) {
 	if (gCV_PerfSpeedTweak.IntValue || gCV_PerfTimingTweak.IntValue) {
 		TweakTakeoffSpeed(player);
 	}
-	if (gCV_JumpHeightTweak.IntValue) {
-		TweakJumpHeight(player);
-	}
 }
 
 void TweakTakeoffSpeed(MovementPlayer player) {
@@ -102,8 +99,8 @@ float CalculateTakeoffSpeed(MovementPlayer player) {
 		Call_OnPlayerPerfectBunnyhopMT(player.id);
 		if (gCV_PerfSpeedTweak.IntValue && player.landingSpeed > 250.0) {
 			// Calculate the takeoff speed based on a formula
-			//return 500.57176 / (1 + 1.68794 * Exponential(-0.00208 * player.landingSpeed));
-			return 0.18571 * player.landingSpeed + 203.57143;
+			return 0.2 * player.landingSpeed + 200;
+			// Old Formula - return 500.57176 / (1 + 1.68794 * Exponential(-0.00208 * player.landingSpeed));
 		}
 		else {
 			return player.landingSpeed;
@@ -124,19 +121,6 @@ bool HitPerf(MovementPlayer player) {
 	}
 }
 
-void TweakJumpHeight(MovementPlayer player) {
-	float origin[3], takeoffOrigin[3];
-	player.GetOrigin(origin);
-	player.GetTakeoffOrigin(takeoffOrigin);
-	// Check if player has achieved additional height, and reduce it to normal if necessary
-	if (origin[2] > takeoffOrigin[2] + NORMAL_JUMP_ORIGIN_OFFSET) {
-		float newOrigin[3];
-		newOrigin = origin;
-		newOrigin[2] = takeoffOrigin[2] + NORMAL_JUMP_ORIGIN_OFFSET;
-		player.SetOrigin(newOrigin);
-	}
-}
-
 
 
 /*===============================  Landing Tweak (Called on Landing)  ===============================*/
@@ -150,16 +134,3 @@ void DuckSlowdownTweak(MovementPlayer player) {
 		player.duckSpeed = NORMAL_DUCK_SPEED;
 	}
 }
-
-
-
-/*===============================  Other Tweaks  ===============================*/
-
-void NerfPerfectCrouchJump(MovementPlayer player) {
-	if (gCV_JumpHeightTweak.IntValue) {
-		float newVelocity[3];
-		player.GetVelocity(newVelocity);
-		newVelocity[2] = NORMAL_JUMP_VERTICAL_VELOCITY;
-		player.SetVelocity(newVelocity);
-	}
-} 
