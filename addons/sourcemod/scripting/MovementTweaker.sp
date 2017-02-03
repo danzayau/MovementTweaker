@@ -21,7 +21,7 @@ Plugin myinfo =
 
 /*===============================  Definitions  ===============================*/
 
-#define NORMAL_JUMP_VERTICAL_VELOCITY 292.618377 // Found by taking player Velocity[2] after normally jumping
+#define NORMAL_JUMP_VERTICAL_VELOCITY 292.54 // Found by testing until binding resulted in similar jump height to normal
 #define NORMAL_JUMP_ORIGIN_OFFSET 2.341745 // Calculated by subtracting player GroundOrigin[2] from Origin[2] after normally jumping
 #define NUMBER_OF_WEAPONS 37
 #define MAX_NORMAL_SPEED 250.0 // Desired speed when just holding down W and running
@@ -116,6 +116,9 @@ public void OnStartTouchGround(int client) {
 public void OnStopTouchGround(int client, bool jumped, bool ducked, bool landed) {
 	if (jumped) {
 		JumpTweak(g_MovementPlayer[client]);
+		if (ducked) {
+			NerfPerfectCrouchJump(g_MovementPlayer[client]);
+		}
 	}
 	else {
 		gB_HitPerf[client] = false;

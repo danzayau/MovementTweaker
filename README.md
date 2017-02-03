@@ -12,6 +12,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
  * **Prestrafe** - Less complex and less buggy version than the implementation found in KZTimer.
  * **Universal Weapon Speed** - You will move at the same speed no matter what weapon you are holding.
  * **Crouch Slowdown Tweak** - Crouching speed is reset upon landing, so consecutive crouch jumps don't feel sluggish.
+ * **Perfect Crouchjump Nerf** - If players crouch and jump in the same tick, it won't result in extra height.
  * **Landing Animation Suppression** - Changes player models on spawn to ones that don't have landing animations.
  * **API** - Forwards and natives for you to use in other plugins (see [movementtweaker.inc](scripting/include/movementtweaker.inc)).
  * All features configurable using convars, and with an automatically generated .cfg file.
@@ -47,7 +48,7 @@ Players are able to perform a perfect b-hop if they jump in the first tick after
 
 The plugin is also able to adjust how much speed you keep when you hit a perfect b-hop. Normally you keep all your speed. Instead, the plugin can take the landing speed and input it into a formula to give a resulting 'rewarded' speed. With the chosen formula, players will need to strafe effectively to maintain a b-hopping speed of around 270.
 
-The formula used is as follows (used for landing speeds above 250): ```0.2 * LandingSpeed + 200```
+The formula used is as follows (used for landing speeds above 250): ```0.2 * LandingSpeed + 200```.
 
 ![Rewarded Speed Graph](perfspeedgraph.png?raw=true)
 
