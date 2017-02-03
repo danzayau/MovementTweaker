@@ -22,7 +22,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 ### Requirements
 
  * **Tested Against**: SourceMod 1.7 Latest / 1.8 Latest / 1.9 Latest
- * [**Movement API Plugin (v0.4.0)**](https://github.com/danzayau/MovementAPI).
+ * [**Movement API Plugin (0.5.0)**](https://github.com/danzayau/MovementAPI)
 
 ### Installation
 
@@ -58,6 +58,4 @@ The formula used is as follows (used for landing speeds above 250): ```0.2 * Lan
 
 This implementation of prestrafe does not take into account how it worked in other Source engine games. It is written based on how I think prestrafe should work since it doesn't exist in CS:GO.
 
-If the player is on the ground, pressing WA or WD or SA or SD (no other combinations of directional inputs are allowed), and turning their mouse, then the player will gain a positive speed modifier. This modifier caps out at a value that results in the maximum ground movement speed of 276.0 u/s. This does mean that players can walk diagonally and move the mouse to maintain maximum pre-strafe speed in a straight line.
-
-Prestrafe also begins to reduce immediately if a correct key combination is not detected. This means that releasing W too early before jumping from a prestrafe is punishing (they won't get the full 276.0 u/s).
+If the player is on the ground, pressing WA or WD or SA or SD (no other combinations of directional inputs are allowed), and turning their mouse, then the player will gain a positive speed modifier. This modifier caps out at a value that results in the maximum ground movement speed of 276.0 u/s. The modifier will immediately begin to decrease if the player fails to prestrafe correctly.
