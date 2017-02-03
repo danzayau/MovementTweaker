@@ -30,7 +30,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
  * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
  * If you want a compatible KZ timer plugin, I can offer you [**SimpleKZ**](https://github.com/danzayau/SimpleKZ).
  
-### Tested Server CVars
+### Tested Server CVars (128 Tick)
 
 ```
 	sv_accelerate 6.5
@@ -46,13 +46,11 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 
 Players are able to perform a perfect b-hop if they jump in the first tick after landing. This means that, normally, perfect b-hops are very inconsistent. This plugin allows you to control the number of ticks after landing is considered a perfect b-hop, meaning they can made consistent without rewarding players who mistime their scroll completely.
 
-The plugin is also able to adjust how much speed you keep when you hit a perfect b-hop. Normally you keep all your speed. Instead, the plugin can take the landing speed and input it into a formula to give a resulting 'rewarded' speed. With the chosen formula, players will need to strafe effectively to maintain a b-hopping speed of around 275.
+The plugin is also able to adjust how much speed you keep when you hit a perfect b-hop. Normally you keep all your speed. Instead, the plugin can take the landing speed and input it into a formula to give a resulting 'rewarded' speed. With the chosen formula, players will need to strafe effectively to maintain a b-hopping speed of around 270.
 
-The formula used is as follows (subject to change): ```500.57176 / (1 + 1.68794 * exp(-0.00208 * LandingSpeed))```
+The formula used is as follows (used for landing speeds above 250): ```0.2 * LandingSpeed + 200```.
 
-![Rewarded Speed Graph](perfspeedgraph1.png?raw=true)
-
-![Rewarded Speed Graph (Zoomed)](perfspeedgraph2.png?raw=true)
+![Rewarded Speed Graph](perfspeedgraph.png?raw=true)
 
 ============================
 
