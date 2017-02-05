@@ -22,7 +22,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 ### Requirements
 
  * **Tested Against**: SourceMod 1.7 Latest / 1.8 Latest / 1.9 Latest
- * [**Movement API Plugin (0.5.0)**](https://github.com/danzayau/MovementAPI)
+ * [**Movement API Plugin**](https://github.com/danzayau/MovementAPI) (included)
 
 ### Installation
 
