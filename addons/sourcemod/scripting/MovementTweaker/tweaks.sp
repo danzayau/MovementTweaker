@@ -83,9 +83,10 @@ void TweakTakeoffSpeed(MovementPlayer player) {
 		Call_OnPlayerPerfectBunnyhopMT(player.id);
 		
 		float nextTakeoffSpeed = CalculateTweakedTakeoffSpeed(player);
-		float oldVelocity[3], landingVelocity[3];
+		float oldVelocity[3], landingVelocity[3], baseVelocity[3];
 		player.GetVelocity(oldVelocity);
 		player.GetLandingVelocity(landingVelocity);
+		player.GetBaseVelocity(baseVelocity);
 		
 		float newVelocity[3];
 		newVelocity = landingVelocity;
@@ -93,6 +94,7 @@ void TweakTakeoffSpeed(MovementPlayer player) {
 		NormalizeVector(newVelocity, newVelocity);
 		ScaleVector(newVelocity, nextTakeoffSpeed);
 		newVelocity[2] = oldVelocity[2];
+		AddVectors(newVelocity, baseVelocity, newVelocity);
 		
 		player.SetVelocity(newVelocity);
 		player.takeoffSpeed = nextTakeoffSpeed;
