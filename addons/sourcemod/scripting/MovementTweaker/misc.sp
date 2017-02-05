@@ -28,5 +28,7 @@ void UpdatePlayerModel(int client) {
 	if (GetClientTeam(client) == CS_TEAM_T) {
 		SetEntityModel(client, gC_PlayerModelT);
 	}
-	SetEntityModel(client, gC_PlayerModelCT);
+	else if (GetClientTeam(client) == CS_TEAM_CT) {
+		SetEntityModel(client, gC_PlayerModelCT);
+	}
 } 
