@@ -143,6 +143,8 @@ void LandingTweak(MovementPlayer player) {
 
 void DuckSlowdownTweak(MovementPlayer player) {
 	if (gCV_ResetDuckSpeedOnLanding.IntValue) {
-		player.duckSpeed = NORMAL_DUCK_SPEED;
+		if (player.duckSpeed < DUCK_SPEED_ONLANDING_MINIMUM) {
+			player.duckSpeed = DUCK_SPEED_ONLANDING_MINIMUM;
+		}
 	}
 } 

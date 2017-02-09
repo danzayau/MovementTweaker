@@ -13,7 +13,7 @@ public Plugin myinfo =
 	name = "Movement Tweaker", 
 	author = "DanZay", 
 	description = "Tweaks CS:GO movement mechanics.", 
-	version = "0.6.1", 
+	version = "0.6.2", 
 	url = "https://github.com/danzayau/MovementTweaker"
 };
 
@@ -28,7 +28,7 @@ public Plugin myinfo =
 #define MAX_PRESTRAFE_MODIFIER 1.104 	// Calculated 276/250
 #define PRESTRAFE_INCREASE_RATE 0.0014
 #define PRESTRAFE_DECREASE_RATE 0.0021
-#define NORMAL_DUCK_SPEED 8.0
+#define DUCK_SPEED_ONLANDING_MINIMUM 7.0
 
 
 
@@ -71,7 +71,13 @@ int gI_WeaponRunSpeeds[NUMBER_OF_WEAPONS] =  // Max movement speed of weapons (r
 
 
 
-/*===============================  Events  ===============================*/
+/*===============================  Plugin Events  ===============================*/
+
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
+	CreateNatives();
+	RegPluginLibrary("MovementTweaker");
+	return APLRes_Success;
+}
 
 public void OnPluginStart() {
 	// Check if game is CS:GO.
@@ -88,15 +94,13 @@ public void OnPluginStart() {
 	SetupMovementMethodmaps();
 }
 
-public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
-	CreateNatives();
-	RegPluginLibrary("MovementTweaker");
-	return APLRes_Success;
-}
-
 public void OnConfigsExecuted() {
 	UpdateAccelerateUseWeaponSpeed();
 }
+
+
+
+/*===============================  Miscellaneous Events  ===============================*/
 
 public void OnMapStart() {
 	PrecacheModels();
