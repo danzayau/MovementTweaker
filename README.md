@@ -1,10 +1,10 @@
-# Movement Tweaker (CS:GO)
+# Movement Tweaker (CS:GO SourceMod Plugin)
 
 [![Build Status](https://travis-ci.org/danzayau/MovementTweaker.svg?branch=master)](https://travis-ci.org/danzayau/MovementTweaker)
 
 Movement Tweaker is an attempt at adjusting movement mechanics to create more consistent and refined gameplay for CS:GO KZ and other, low speed, movement gamemodes such as HnS.
 
-============================
+---
 
 ### Features
 
@@ -17,18 +17,18 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
  * **API** - Forwards and natives for you to use in other plugins (see [movementtweaker.inc](scripting/include/movementtweaker.inc)).
  * All features configurable using convars, and with an automatically generated .cfg file.
 
-============================
+---
 
 ### Requirements
 
- * **Tested Against**: SourceMod 1.7 Latest / 1.8 Latest / 1.9 Latest
+ * **Tested Using**: SourceMod 1.8 Latest
  * [**Movement API Plugin**](https://github.com/danzayau/MovementAPI) (included)
 
 ### Installation
 
  * Extract ```MovementTweaker.zip``` to ```csgo/``` in your server directory.
  * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
- * If you want a compatible KZ timer plugin, I can offer you [**SimpleKZ**](https://github.com/danzayau/SimpleKZ).
+ * If you are trying to make a KZ server, use [**SimpleKZ**](https://github.com/danzayau/SimpleKZ) instead (this plugin is not needed).
  
 ### Tested Server CVars (128 Tick)
 
@@ -40,7 +40,7 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
 	sv_mincmdrate <server tickrate>
 ```
  
-============================
+---
 
 ### Bunnyhop Tweaker
 
@@ -52,7 +52,7 @@ The formula used is as follows (used for landing speeds above 250): ```0.2 * Lan
 
 ![Rewarded Speed Graph](perfspeedgraph.png?raw=true)
 
-============================
+---
 
 ### Prestrafe
 
