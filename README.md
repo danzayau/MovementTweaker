@@ -36,12 +36,6 @@
 
 Players are able to perform a perfect b-hop if they jump in the first tick after landing. This means that, normally, perfect b-hops are very inconsistent. This plugin allows you to control the number of ticks after landing is considered a perfect b-hop, meaning they can made consistent without rewarding players who mistime their scroll completely.
 
-The plugin is also able to adjust how much speed you keep when you hit a perfect b-hop. Normally you keep all your speed. Instead, the plugin can take the landing speed and input it into a formula to give a resulting 'rewarded' speed. With the chosen formula, players will need to strafe effectively to maintain a b-hopping speed of around 270.
-
-The formula used is as follows (used for landing speeds above 250): ```0.2 * LandingSpeed + 200```.
-
-![Rewarded Speed Graph](perfspeedgraph.png?raw=true)
-
 ## Prestrafe
 
 This implementation of prestrafe does not take into account how it worked in other Source engine games. It is written based on how I think prestrafe should work since it doesn't exist in CS:GO.
