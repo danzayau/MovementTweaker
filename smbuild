@@ -1,8 +1,11 @@
-Plugin(source='addons/sourcemod/scripting/movementtweaker.sp')
+Plugin(
+	name='movementtweaker',
+	source='addons/sourcemod/scripting/movementtweaker.sp'
+)
 
 Package(name='MovementTweaker',
-        plugins=['MovementTweaker'],
-        filegroups={
-            '.':['README.md', 'LICENSE'],
-        },
+	plugins=['movementtweaker'],
+	filegroups={
+		'.':['README.md', 'LICENSE'],
+	}
 )
