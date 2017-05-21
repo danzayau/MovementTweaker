@@ -4,7 +4,7 @@
 
 ## Features
 
- * **Bunnyhop Tweaker** - More consistent perfect b-hops, and customised speed rewarded for hitting perfects.
+ * **Bunnyhop Tweaker** - Control the timing window that players can hit perfect bunnyhops.
  * **Prestrafe** - Less complex and less buggy version than the implementation found in KZTimer.
  * **Universal Weapon Speed** - You will move at the same speed no matter what weapon you are holding.
  * **Crouch Slowdown Tweak** - Crouching speed is reset upon landing, so consecutive crouch jumps don't feel sluggish.
