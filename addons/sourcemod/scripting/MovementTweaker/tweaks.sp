@@ -1,150 +1,214 @@
-/*	tweaks.sp
+/*
+	Tweaks
 
 	Movement tweaks.
 */
 
 
-/*===============================  General Tweak (Called OnPlayerRunCmd)  ===============================*/
 
-void GeneralTweak(MovementPlayer player) {
-	if (player.onGround) {
-		player.velocityModifier = PrestrafeVelocityModifier(player) * WeaponVelocityModifier(player);
+#define SPEED_NORMAL 250.0
+#define SPEED_NO_WEAPON 260.0
+#define DUCK_SPEED_MINIMUM 8.0
+
+#define PRE_VELMOD_MAX 1.104 // Calculated 276/250
+#define PRE_VELMOD_INCREMENT 0.0014 // Per tick when prestrafing
+#define PRE_VELMOD_DECREMENT 0.0021 // Per tick when not prestrafing
+
+static int oldButtons[MAXPLAYERS + 1];
+static float preVelMod[MAXPLAYERS + 1];
+
+static char weaponNames[][] = 
+{
+	"weapon_knife", "weapon_hkp2000", "weapon_deagle", "weapon_elite", "weapon_fiveseven", 
+	"weapon_glock", "weapon_p250", "weapon_tec9", "weapon_decoy", "weapon_flashbang", 
+	"weapon_hegrenade", "weapon_incgrenade", "weapon_molotov", "weapon_smokegrenade", "weapon_taser", 
+	"weapon_ak47", "weapon_aug", "weapon_awp", "weapon_bizon", "weapon_famas", 
+	"weapon_g3sg1", "weapon_galilar", "weapon_m249", "weapon_m4a1", "weapon_mac10", 
+	"weapon_mag7", "weapon_mp7", "weapon_mp9", "weapon_negev", "weapon_nova", 
+	"weapon_p90", "weapon_sawedoff", "weapon_scar20", "weapon_sg556", "weapon_ssg08", 
+	"weapon_ump45", "weapon_xm1014"
+};
+
+static int weaponRunSpeeds[sizeof(weaponNames)] = 
+{
+	250, 240, 230, 240, 240, 
+	240, 240, 240, 245, 245, 
+	245, 245, 245, 245, 220, 
+	215, 220, 200, 240, 220, 
+	215, 215, 195, 225, 240, 
+	225, 220, 240, 150, 220, 
+	230, 210, 215, 210, 230, 
+	230, 215
+};
+
+
+
+// =========================  LISTENERS  ========================= //
+
+void OnPlayerRunCmd_Tweaks(int client, int &buttons)
+{
+	if (!IsPlayerAlive(client))
+	{
+		return;
+	}
+	
+	MovementAPIPlayer player = new MovementAPIPlayer(client);
+	RemoveCrouchJumpBind(player, buttons);
+	TweakVelMod(player);
+	oldButtons[client] = buttons;
+}
+
+void OnStartTouchGround_Tweaks(int client)
+{
+	MovementAPIPlayer player = new MovementAPIPlayer(client);
+	ReduceDuckSlowdown(player);
+}
+
+void OnStopTouchGround_Tweaks(int client, bool jumped)
+{
+	MovementAPIPlayer player = new MovementAPIPlayer(client);
+	if (jumped)
+	{
+		TweakJump(player);
+	}
+	preVelMod[player.id] = 1.0;
+}
+
+void OnPlayerSpawn_Tweaks(int client)
+{
+	if (!gCV_SuppressLandingAnimation.BoolValue)
+	{
+		return;
+	}
+	
+	if (GetClientTeam(client) == CS_TEAM_T)
+	{
+		SetEntityModel(client, gC_PlayerModelT);
+	}
+	else if (GetClientTeam(client) == CS_TEAM_CT)
+	{
+		SetEntityModel(client, gC_PlayerModelCT);
 	}
 }
 
-float PrestrafeVelocityModifier(MovementPlayer player) {
-	if (!gCV_Prestrafe.IntValue) {
-		gF_PrestrafeVelocityModifier[player.id] = 1.0; // Default to 1.0.
+
+
+// =========================  PRIVATE  ========================= //
+
+static void TweakVelMod(MovementAPIPlayer player)
+{
+	if (!player.onGround)
+	{
+		return;
 	}
-	
-	// If correct prestrafe technique is detected, increase prestrafe modifier
-	if (CheckIfValidPrestrafeKeys(player) && player.turning) {
-		gF_PrestrafeVelocityModifier[player.id] += PRESTRAFE_INCREASE_RATE;
-	}
-	// Else not prestrafing, so decrease prestrafe modifier
-	else {
-		gF_PrestrafeVelocityModifier[player.id] -= PRESTRAFE_DECREASE_RATE;
-	}
-	
-	// Ensure prestrafe modifier is in range
-	if (gF_PrestrafeVelocityModifier[player.id] < 1.0) {
-		gF_PrestrafeVelocityModifier[player.id] = 1.0;
-	}
-	else if (gF_PrestrafeVelocityModifier[player.id] > MAX_PRESTRAFE_MODIFIER) {
-		gF_PrestrafeVelocityModifier[player.id] = MAX_PRESTRAFE_MODIFIER;
-	}
-	
-	return gF_PrestrafeVelocityModifier[player.id];
+	player.velocityModifier = CalcPrestrafeVelMod(player) * CalcWeaponVelMod(player);
 }
 
-bool CheckIfValidPrestrafeKeys(MovementPlayer player) {
-	int buttons = GetClientButtons(player.id);
-	// If _only_ WA or WD or SA or SD are pressed, then return true.
-	if (((buttons & IN_FORWARD && !(buttons & IN_BACK)) || (!(buttons & IN_FORWARD) && buttons & IN_BACK))
-		 && ((buttons & IN_MOVELEFT && !(buttons & IN_MOVERIGHT)) || (!(buttons & IN_MOVELEFT) && buttons & IN_MOVERIGHT))) {
-		return true;
+static float CalcPrestrafeVelMod(MovementAPIPlayer player)
+{
+	if (!gCV_Prestrafe.BoolValue)
+	{
+		return 1.0;
 	}
-	return false;
+	
+	if (player.turning
+		 && ((player.buttons & IN_FORWARD && !(player.buttons & IN_BACK)) || (!(player.buttons & IN_FORWARD) && player.buttons & IN_BACK))
+		 && ((player.buttons & IN_MOVELEFT && !(player.buttons & IN_MOVERIGHT)) || (!(player.buttons & IN_MOVELEFT) && player.buttons & IN_MOVERIGHT)))
+	{
+		preVelMod[player.id] += PRE_VELMOD_INCREMENT;
+	}
+	else
+	{
+		preVelMod[player.id] -= PRE_VELMOD_DECREMENT;
+	}
+	
+	// Keep prestrafe velocity modifier within range
+	if (preVelMod[player.id] < 1.0)
+	{
+		preVelMod[player.id] = 1.0;
+	}
+	else if (preVelMod[player.id] > PRE_VELMOD_MAX)
+	{
+		preVelMod[player.id] = PRE_VELMOD_MAX;
+	}
+	
+	return preVelMod[player.id];
 }
 
-float WeaponVelocityModifier(MovementPlayer player) {
-	// Universal Weapon Speed
-	if (!gCV_UniversalWeaponSpeed.IntValue) {
-		return 1.0; // Default to 1.0.
+static float CalcWeaponVelMod(MovementAPIPlayer player)
+{
+	if (!gCV_UniversalWeaponSpeed.BoolValue)
+	{
+		return 1.0;
 	}
 	
 	int weaponEnt = GetEntPropEnt(player.id, Prop_Data, "m_hActiveWeapon");
-	if (IsValidEntity(weaponEnt)) {
-		char weaponName[64];
-		GetEntityClassname(weaponEnt, weaponName, sizeof(weaponName)); // What weapon the client is holding.
-		// Get weapon speed and work out how much to scale the modifier.
-		for (int weaponID = 0; weaponID < NUMBER_OF_WEAPONS; weaponID++) {
-			if (StrEqual(weaponName, gC_WeaponNames[weaponID])) {
-				return MAX_NORMAL_SPEED / gI_WeaponRunSpeeds[weaponID];
-			}
+	if (!IsValidEntity(weaponEnt))
+	{
+		return SPEED_NORMAL / SPEED_NO_WEAPON; // Weapon entity not found, so no weapon
+	}
+	
+	char weaponName[64];
+	GetEntityClassname(weaponEnt, weaponName, sizeof(weaponName)); // Weapon the client is holding
+	
+	// Get weapon speed and work out how much to scale the modifier
+	int weaponCount = sizeof(weaponNames);
+	for (int weaponID = 0; weaponID < weaponCount; weaponID++)
+	{
+		if (StrEqual(weaponName, weaponNames[weaponID]))
+		{
+			return SPEED_NORMAL / weaponRunSpeeds[weaponID];
 		}
 	}
-	return MAX_NORMAL_SPEED / 260.0; // Weapon entity not found so must have no weapon (260 u/s).
+	
+	return 1.0; // If weapon isn't found (new weapon?)
 }
 
-
-
-/*===============================  Jump Tweaks  ===============================*/
-
-void JumpTweak(MovementPlayer player) {
-	if (gCV_PerfSpeedTweak.IntValue || gCV_PerfTimingTweak.IntValue) {
-		TweakTakeoffSpeed(player);
+static void TweakJump(MovementAPIPlayer player)
+{
+	if (!gCV_PerfTimingTweak.BoolValue || gCV_PerfTicks.IntValue <= 1)
+	{
+		return;
 	}
-}
-
-void TweakTakeoffSpeed(MovementPlayer player) {
-	if (HitPerf(player)) {
-		gB_HitPerf[player.id] = true;
-		Call_OnPlayerPerfectBunnyhopMT(player.id);
-		
-		float nextTakeoffSpeed = CalculateTweakedTakeoffSpeed(player);
-		float oldVelocity[3], landingVelocity[3], baseVelocity[3];
-		player.GetVelocity(oldVelocity);
-		player.GetLandingVelocity(landingVelocity);
+	
+	if (player.takeoffTick - player.landingTick <= gCV_PerfTicks.IntValue
+		 && player.takeoffTick - player.landingTick > 1)
+	{
+		float velocity[3], baseVelocity[3], newVelocity[3];
+		player.GetVelocity(velocity);
 		player.GetBaseVelocity(baseVelocity);
-		
-		float newVelocity[3];
-		newVelocity = landingVelocity;
-		newVelocity[2] = 0.0; // Only adjust horizontal speed
-		NormalizeVector(newVelocity, newVelocity);
-		ScaleVector(newVelocity, nextTakeoffSpeed);
-		newVelocity[2] = oldVelocity[2];
+		player.GetLandingVelocity(newVelocity);
+		newVelocity[2] = velocity[2];
+		SetVectorHorizontalLength(newVelocity, player.landingSpeed);
 		AddVectors(newVelocity, baseVelocity, newVelocity);
-		
-		player.SetVelocity(newVelocity);
-		player.takeoffSpeed = nextTakeoffSpeed;
-	}
-	else {
-		gB_HitPerf[player.id] = false;
-	}
-}
-
-float CalculateTweakedTakeoffSpeed(MovementPlayer player) {
-	if (gCV_PerfSpeedTweak.IntValue && player.landingSpeed > 250.0) {
-		// Calculate the takeoff speed based on a formula
-		return 0.2 * player.landingSpeed + 200;
-		// Old Formula - return 500.57176 / (1 + 1.68794 * Exponential(-0.00208 * player.landingSpeed));
-	}
-	else {
-		return player.landingSpeed;
-	}
-}
-
-bool HitPerf(MovementPlayer player) {
-	if (gCV_PerfTimingTweak.IntValue) {
-		return player.jumpTick - player.landingTick <= gCV_PerfTicks.IntValue;
-	}
-	else {
-		return player.jumpTick - player.landingTick <= 1;
-	}
-}
-
-void NerfPerfectCrouchJump(MovementPlayer player) {
-	if (gCV_NerfPerfectCrouchjump.IntValue) {
-		float newVelocity[3];
-		player.GetVelocity(newVelocity);
-		newVelocity[2] = NORMAL_JUMP_VERTICAL_VELOCITY;
 		player.SetVelocity(newVelocity);
 	}
 }
 
-
-
-/*===============================  Landing Tweak (Called on Landing)  ===============================*/
-
-void LandingTweak(MovementPlayer player) {
-	DuckSlowdownTweak(player);
+static void RemoveCrouchJumpBind(MovementAPIPlayer player, int &buttons)
+{
+	if (!gCV_NerfPerfectCrouchjump.BoolValue)
+	{
+		return;
+	}
+	
+	if (player.onGround && buttons & IN_JUMP
+		 && !(oldButtons[player.id] & IN_JUMP)
+		 && !(oldButtons[player.id] & IN_DUCK))
+	{
+		buttons &= ~IN_DUCK;
+	}
 }
 
-void DuckSlowdownTweak(MovementPlayer player) {
-	if (gCV_ResetDuckSpeedOnLanding.IntValue) {
-		if (player.duckSpeed < DUCK_SPEED_ONLANDING_MINIMUM) {
-			player.duckSpeed = DUCK_SPEED_ONLANDING_MINIMUM;
-		}
+static void ReduceDuckSlowdown(MovementAPIPlayer player)
+{
+	if (!gCV_ResetDuckSpeedOnLanding.BoolValue)
+	{
+		return;
+	}
+	
+	if (player.duckSpeed < DUCK_SPEED_MINIMUM)
+	{
+		player.duckSpeed = DUCK_SPEED_MINIMUM;
 	}
 } 

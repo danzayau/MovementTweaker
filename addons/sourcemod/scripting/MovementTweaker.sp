@@ -1,137 +1,123 @@
 #include <sourcemod>
-#include <sdktools>
-#include <cstrike>
 
-#include <movement>
-#include <movementtweaker>
+#include <cstrike>
+#include <sdktools>
+
+#include <movementapi>
 
 #pragma newdecls required
 #pragma semicolon 1
+
+
 
 public Plugin myinfo = 
 {
 	name = "Movement Tweaker", 
 	author = "DanZay", 
 	description = "Tweaks CS:GO movement mechanics.", 
-	version = "0.6.2", 
+	version = "0.7.0", 
 	url = "https://github.com/danzayau/MovementTweaker"
 };
 
+ConVar gCV_AccelerateUseWeaponSpeed;
+ConVar gCV_Prestrafe;
+ConVar gCV_UniversalWeaponSpeed;
+ConVar gCV_PerfTimingTweak;
+ConVar gCV_PerfTicks;
+ConVar gCV_ResetDuckSpeedOnLanding;
+ConVar gCV_NerfPerfectCrouchjump;
+ConVar gCV_SuppressLandingAnimation;
+ConVar gCV_PlayerModelT;
+ConVar gCV_PlayerModelCT;
 
-
-/*===============================  Definitions  ===============================*/
-
-#define NORMAL_JUMP_VERTICAL_VELOCITY 292.54 // Found by testing until binding resulted in similar jump height to normal
-#define NUMBER_OF_WEAPONS 37
-#define MAX_NORMAL_SPEED 250.0 // Desired speed when just holding down W and running
-#define NO_WEAPON_SPEED // Max speed with no weapon and just holding down W and running
-#define MAX_PRESTRAFE_MODIFIER 1.104 	// Calculated 276/250
-#define PRESTRAFE_INCREASE_RATE 0.0014
-#define PRESTRAFE_DECREASE_RATE 0.0021
-#define DUCK_SPEED_ONLANDING_MINIMUM 7.0
-
-
-
-/*===============================  Global Variables  ===============================*/
-
-MovementPlayer g_MovementPlayer[MAXPLAYERS + 1];
-float gF_PrestrafeVelocityModifier[MAXPLAYERS + 1];
-bool gB_HitPerf[MAXPLAYERS + 1];
 char gC_PlayerModelT[256];
 char gC_PlayerModelCT[256];
 
-char gC_WeaponNames[NUMBER_OF_WEAPONS][] = 
-{ "weapon_ak47", "weapon_aug", "weapon_awp", "weapon_bizon", "weapon_deagle", 
-	"weapon_decoy", "weapon_elite", "weapon_famas", "weapon_fiveseven", "weapon_flashbang", 
-	"weapon_g3sg1", "weapon_galilar", "weapon_glock", "weapon_hegrenade", "weapon_hkp2000", 
-	"weapon_incgrenade", "weapon_knife", "weapon_m249", "weapon_m4a1", "weapon_mac10", 
-	"weapon_mag7", "weapon_molotov", "weapon_mp7", "weapon_mp9", "weapon_negev", 
-	"weapon_nova", "weapon_p250", "weapon_p90", "weapon_sawedoff", "weapon_scar20", 
-	"weapon_sg556", "weapon_smokegrenade", "weapon_ssg08", "weapon_taser", "weapon_tec9", 
-	"weapon_ump45", "weapon_xm1014" };
-
-int gI_WeaponRunSpeeds[NUMBER_OF_WEAPONS] =  // Max movement speed of weapons (respective to gC_WeaponNames array).
-{ 215, 220, 200, 240, 230, 
-	245, 240, 220, 240, 245, 
-	215, 215, 240, 245, 240, 
-	245, 250, 195, 225, 240, 
-	225, 245, 220, 240, 195, 
-	220, 240, 230, 210, 215, 
-	210, 245, 230, 240, 240, 
-	230, 215 };
+#include "movementtweaker/tweaks.sp"
 
 
 
-/*===============================  Includes  ===============================*/
-
-#include "MovementTweaker/convars.sp"
-#include "MovementTweaker/tweaks.sp"
-#include "MovementTweaker/misc.sp"
-#include "MovementTweaker/api.sp"
-
-
-
-/*===============================  Plugin Events  ===============================*/
-
-public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
-	CreateNatives();
-	RegPluginLibrary("MovementTweaker");
-	return APLRes_Success;
-}
-
-public void OnPluginStart() {
-	// Check if game is CS:GO.
-	EngineVersion gameEngine = GetEngineVersion();
-	if (gameEngine != Engine_CSGO) {
+public void OnPluginStart()
+{
+	if (GetEngineVersion() != Engine_CSGO)
+	{
 		SetFailState("This plugin is for CS:GO.");
 	}
-	CreateGlobalForwards();
-	RegisterConVars();
-	AutoExecConfig(true, "MovementTweaker");
-	// Hooks
-	HookEvent("player_spawn", OnPlayerSpawn);
 	
-	SetupMovementMethodmaps();
+	RegisterConVars();
+	
+	AutoExecConfig(true, "MovementTweaker");
+	
+	HookEvent("player_spawn", OnPlayerSpawn);
 }
 
-public void OnConfigsExecuted() {
+public void OnConfigsExecuted()
+{
 	UpdateAccelerateUseWeaponSpeed();
 }
 
-
-
-/*===============================  Miscellaneous Events  ===============================*/
-
-public void OnMapStart() {
-	PrecacheModels();
+public void OnMapStart()
+{
+	// Setup and precache player models
+	GetConVarString(gCV_PlayerModelT, gC_PlayerModelT, sizeof(gC_PlayerModelT));
+	GetConVarString(gCV_PlayerModelCT, gC_PlayerModelCT, sizeof(gC_PlayerModelCT));
+	
+	PrecacheModel(gC_PlayerModelT, true);
+	AddFileToDownloadsTable(gC_PlayerModelT);
+	PrecacheModel(gC_PlayerModelCT, true);
+	AddFileToDownloadsTable(gC_PlayerModelCT);
 }
+
+
+
+// =========================  CONVARS  ========================= //
+
+void RegisterConVars()
+{
+	gCV_AccelerateUseWeaponSpeed = FindConVar("sv_accelerate_use_weapon_speed");
+	
+	gCV_Prestrafe = CreateConVar("mt_prestrafe", "1", "Sets whether prestrafe is enabled.", _, true, 0.0, true, 1.0);
+	gCV_UniversalWeaponSpeed = CreateConVar("mt_universal_weapon_speed", "1", "Sets whether all weapons should have the same speed.", _, true, 0.0, true, 1.0);
+	gCV_PerfTimingTweak = CreateConVar("mt_perf_timing_tweak", "1", "Sets whether to adjust the number of ticks after landing that jumping is considered a perfect b-hop.", _, true, 0.0, true, 1.0);
+	gCV_PerfTicks = CreateConVar("mt_perf_ticks", "2", "Number of ticks after landing that jumping counts as a perfect bunnyhop.", _, true, 1.0, false);
+	gCV_ResetDuckSpeedOnLanding = CreateConVar("mt_reset_duck_speed_on_landing", "1", "Sets whether to reset duckspeed upon landing.", _, true, 0.0, true, 1.0);
+	gCV_NerfPerfectCrouchjump = CreateConVar("mt_nerf_perfect_crouchjump", "1", "Sets whether to disable perfect crouch jumps.", _, true, 0.0, true, 1.0);
+	gCV_SuppressLandingAnimation = CreateConVar("mt_suppress_landing_animation", "1", "Sets whether to change player models on spawn to suppress the landing animations.", _, true, 0.0, true, 1.0);
+	gCV_PlayerModelT = CreateConVar("mt_player_model_t", "models/player/tm_leet_varianta.mdl", "The model to change Terrorists to (applies after map change).");
+	gCV_PlayerModelCT = CreateConVar("mt_player_model_ct", "models/player/ctm_idf_variantc.mdl", "The model to change Counter-Terrorists to (applies after map change).");
+	
+	gCV_UniversalWeaponSpeed.AddChangeHook(UniversalWeaponSpeedChanged);
+}
+
+public void UniversalWeaponSpeedChanged(Handle convar, const char[] oldValue, const char[] newValue)
+{
+	UpdateAccelerateUseWeaponSpeed();
+}
+
+void UpdateAccelerateUseWeaponSpeed()
+{
+	gCV_AccelerateUseWeaponSpeed.IntValue = gCV_UniversalWeaponSpeed.IntValue;
+}
+
+
+
+// =========================  CLIENT  ========================= //
 
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3], float angles[3], int &weapon, int &subtype, int &cmdnum, int &tickcount, int &seed, int mouse[2]) {
-	if (IsPlayerAlive(client)) {
-		GeneralTweak(g_MovementPlayer[client]);
-	}
+	OnPlayerRunCmd_Tweaks(client, buttons);
 }
 
-public void OnStartTouchGround(int client) {
-	LandingTweak(g_MovementPlayer[client]);
+public void Movement_OnStartTouchGround(int client)
+{
+	OnStartTouchGround_Tweaks(client);
 }
 
-public void OnStopTouchGround(int client, bool jumped, bool ducked, bool landed) {
-	if (jumped) {
-		JumpTweak(g_MovementPlayer[client]);
-		if (ducked) {
-			NerfPerfectCrouchJump(g_MovementPlayer[client]);
-		}
-	}
-	else {
-		gB_HitPerf[client] = false;
-	}
-	gF_PrestrafeVelocityModifier[client] = 1.0; // Because it doesn't update when in the air
+public void Movement_OnStopTouchGround(int client, bool jumped)
+{
+	OnStopTouchGround_Tweaks(client, jumped);
 }
 
-// Set player models to ones that don't have landing animations
-public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
-	if (gCV_SuppressLandingAnimation.IntValue) {
-		UpdatePlayerModel(GetClientOfUserId(GetEventInt(event, "userid")));
-	}
+public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast)
+{
+	OnPlayerSpawn_Tweaks(GetClientOfUserId(GetEventInt(event, "userid")));
 } 
