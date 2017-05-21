@@ -1,12 +1,8 @@
-# Movement Tweaker (CS:GO SourceMod Plugin)
+# Movement Tweaker (CS:GO)
 
 [![Build Status](https://travis-ci.org/danzayau/MovementTweaker.svg?branch=master)](https://travis-ci.org/danzayau/MovementTweaker)
 
-Movement Tweaker is an attempt at adjusting movement mechanics to create more consistent and refined gameplay for CS:GO KZ and other, low speed, movement gamemodes such as HnS.
-
----
-
-### Features
+## Features
 
  * **Bunnyhop Tweaker** - More consistent perfect b-hops, and customised speed rewarded for hitting perfects.
  * **Prestrafe** - Less complex and less buggy version than the implementation found in KZTimer.
@@ -14,35 +10,29 @@ Movement Tweaker is an attempt at adjusting movement mechanics to create more co
  * **Crouch Slowdown Tweak** - Crouching speed is reset upon landing, so consecutive crouch jumps don't feel sluggish.
  * **Perfect Crouchjump Nerf** - If players crouch and jump in the same tick, it won't result in extra height.
  * **Landing Animation Suppression** - Changes player models on spawn to ones that don't have landing animations.
- * **API** - Forwards and natives for you to use in other plugins (see [movementtweaker.inc](scripting/include/movementtweaker.inc)).
  * All features configurable using convars, and with an automatically generated .cfg file.
 
----
-
+## Usage
+ 
 ### Requirements
 
- * **Tested Using**: SourceMod 1.8 Latest
+ * SourceMod 1.8+
  * [**Movement API Plugin**](https://github.com/danzayau/MovementAPI) (included)
 
 ### Installation
 
- * Extract ```MovementTweaker.zip``` to ```csgo/``` in your server directory.
- * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg```.
- * If you are trying to make a KZ server, use [**SimpleKZ**](https://github.com/danzayau/SimpleKZ) instead (this plugin is not needed).
+ * Download and extract MovementTweaker-vX.X.X.zip from the latest GitHub release to csgo/ in the server directory.
+ * Config file is generated and saved to ```csgo/cfg/sourcemod/MovementTweaker.cfg``` after starting the plugin.
  
-### Tested Server CVars (128 Tick)
+### Tested Server CVars
 
 ```
 	sv_accelerate 6.5
 	sv_enablebunnyhopping 1
 	sv_staminamax 0	
-	sv_minupdaterate <server tickrate>
-	sv_mincmdrate <server tickrate>
 ```
  
----
-
-### Bunnyhop Tweaker
+## Bunnyhop Tweaker
 
 Players are able to perform a perfect b-hop if they jump in the first tick after landing. This means that, normally, perfect b-hops are very inconsistent. This plugin allows you to control the number of ticks after landing is considered a perfect b-hop, meaning they can made consistent without rewarding players who mistime their scroll completely.
 
@@ -52,9 +42,7 @@ The formula used is as follows (used for landing speeds above 250): ```0.2 * Lan
 
 ![Rewarded Speed Graph](perfspeedgraph.png?raw=true)
 
----
-
-### Prestrafe
+## Prestrafe
 
 This implementation of prestrafe does not take into account how it worked in other Source engine games. It is written based on how I think prestrafe should work since it doesn't exist in CS:GO.
 

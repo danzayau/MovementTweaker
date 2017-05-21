@@ -1,4 +1,4 @@
-Plugin(source='addons/sourcemod/scripting/MovementTweaker.sp')
+Plugin(source='addons/sourcemod/scripting/movementtweaker.sp')
 
 Package(name='MovementTweaker',
         plugins=['MovementTweaker'],
