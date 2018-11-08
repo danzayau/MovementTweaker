@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/danzayau/MovementTweaker.svg?branch=master)](https://travis-ci.org/danzayau/MovementTweaker)
 
+**NOTE**: Consider using a [standalone GOKZ mode plugin](https://bitbucket.org/kztimerglobalteam/gokz) instead.
+
 ## Features
 
  * **Bunnyhop Tweaker** - Control the timing window that players can hit perfect bunnyhops.
